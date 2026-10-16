@@ -1,4 +1,4 @@
-# Architect 2.0
+# Shipmate
 
 A vibe-coding platform that feels like talking to an AI engineering team rather than one giant chatbot.
 
