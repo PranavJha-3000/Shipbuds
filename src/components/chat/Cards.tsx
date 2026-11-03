@@ -3,11 +3,11 @@ import { useParams } from 'react-router-dom'
 import { useStore } from '../../store/store'
 import { agentById } from '../../store/roster'
 import { STRATEGY_BLURB } from '../../store/scripts'
-import type { BuildCardData, PlanCardData, StrategyCardData, Strategy } from '../../store/types'
+import type { BuildCardData, BuildTask, ClarifyCardData, DecisionCardData, PlanCardData, StrategyCardData, Strategy } from '../../store/types'
 import { cx } from '../ui/cx'
 import { Progress } from '../ui/Progress'
 import { Button } from '../ui/Button'
-import { Check, Pencil, Hammer, ChevronDown } from 'lucide-react'
+import { Check, Pencil, Hammer, ChevronDown, CircleHelp } from 'lucide-react'
 
 /**
  * CARDS
@@ -198,6 +198,9 @@ export const StrategyCard: React.FC<{ card: StrategyCardData }> = ({ card }) => 
 /** Compact build status, inline. Collapsed by default. */
 export const BuildCard: React.FC<{ card: BuildCardData }> = ({ card }) => {
   const [open, setOpen] = useState(false)
+  const { projectId = '' } = useParams()
+  const tasks = useStore((s) => s.builds[projectId]?.tasks)
+  const technical = useStore((s) => s.user?.persona === 'technical')
   const live = card.state === 'live'
   const active = Object.entries(card.progress).filter(([, v]) => v > 0)
   const overall = active.length ? Math.round(active.reduce((a, [, v]) => a + v, 0) / active.length) : 0
@@ -238,8 +241,8 @@ export const BuildCard: React.FC<{ card: BuildCardData }> = ({ card }) => {
 
       {open && (
         <div className="space-y-2 border-t border-line px-4 py-3">
-          {active.length === 0 && <p className="text-meta text-muted">Waiting for the first specialist.</p>}
-          {active.map(([id, v]) => (
+          {technical && tasks ? <TaskList tasks={tasks} /> : active.length === 0 && <p className="text-meta text-muted">Waiting for the first specialist.</p>}
+          {!(technical && tasks) && active.map(([id, v]) => (
             <div key={id} className="flex items-center gap-3">
               <span className="w-20 shrink-0 text-meta text-muted">{agentById(id).name}</span>
               <Progress className="flex-1" value={v} thickness={2} label={`${agentById(id).name} progress`} />
@@ -249,5 +252,144 @@ export const BuildCard: React.FC<{ card: BuildCardData }> = ({ card }) => {
         </div>
       )}
     </Shell>
+  )
+}
+
+/**
+ * Clarify — the Manager's questions before the plan. Every question has a
+ * default already picked, so "Let me decide" is always a safe answer and the
+ * card never blocks someone who just wants to see a plan.
+ */
+export const ClarifyCard: React.FC<{ card: ClarifyCardData }> = ({ card }) => {
+  const { projectId = '' } = useParams()
+  const answerClarify = useStore((s) => s.answerClarify)
+  const [picks, setPicks] = useState(() => card.questions.map((q) => q.selected))
+  const done = !!card.resolved
+  const shown = done ? card.questions.map((q) => q.selected) : picks
+
+  return (
+    <Shell>
+      <div className="px-4 pt-3">
+        <CardLabel>Quick questions</CardLabel>
+      </div>
+      <div className="space-y-3 px-4 pb-3 pt-2.5">
+        {card.questions.map((q, qi) => (
+          <div key={q.id} role="radiogroup" aria-label={q.q}>
+            <p className="text-meta text-paper">{q.q}</p>
+            <div className="mt-1.5 flex flex-wrap gap-1.5">
+              {q.options.map((o, oi) => {
+                const on = shown[qi] === oi
+                return (
+                  <button
+                    key={o.label}
+                    type="button"
+                    role="radio"
+                    aria-checked={on}
+                    disabled={done}
+                    onClick={() => setPicks((p) => p.map((v, i) => (i === qi ? oi : v)))}
+                    className={cx(
+                      'coarse-hit rounded-full border px-2.5 py-1 text-micro transition-colors duration-instant ease-standard',
+                      on ? 'border-accent/60 bg-accent/15 text-paper' : 'border-line text-muted',
+                      !done && !on && 'hover:bg-bubble',
+                    )}
+                  >
+                    {o.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+      {done ? (
+        <p className="border-t border-line px-4 py-2.5 text-meta text-muted">
+          {card.resolved === 'skipped' ? 'Manager used its defaults.' : 'Answered.'}
+        </p>
+      ) : (
+        <div className="flex items-center gap-2 border-t border-line px-4 py-2.5">
+          <Button size="sm" variant="ghost" className="coarse-hit" onClick={() => answerClarify(projectId, null)}>
+            Let the Manager decide
+          </Button>
+          <Button size="sm" className="coarse-hit ml-auto" onClick={() => answerClarify(projectId, picks)}>
+            Continue
+          </Button>
+        </div>
+      )}
+    </Shell>
+  )
+}
+
+/**
+ * Needs you — a specialist hit a decision only the user can make. The build
+ * is paused until it's answered; this is the only card that interrupts.
+ */
+export const DecisionCard: React.FC<{ card: DecisionCardData }> = ({ card }) => {
+  const { projectId = '' } = useParams()
+  const answerDecision = useStore((s) => s.answerDecision)
+  const done = card.selected !== undefined
+
+  return (
+    <Shell className={cx(!done && 'border-accentPurple/40')}>
+      <div className="flex items-center gap-2 px-4 pt-3">
+        <CircleHelp size={12} className="text-accentPurpleSoft" aria-hidden />
+        <CardLabel>{done ? 'Decided' : 'Needs you'}</CardLabel>
+        <span className="ml-auto text-micro text-muted">from {agentById(card.from).name}</span>
+      </div>
+      <p className="px-4 pt-2 text-label text-paper">{card.question}</p>
+      <div className="mt-1.5 px-1.5 pb-1.5">
+        {card.options.map((o, i) => {
+          const on = card.selected === i
+          return (
+            <button
+              key={o}
+              type="button"
+              disabled={done}
+              aria-pressed={on}
+              onClick={() => answerDecision(projectId, i)}
+              className={cx(
+                'flex w-full items-center gap-3 rounded-sm px-2.5 py-2 text-left text-label',
+                'transition-colors duration-instant ease-standard',
+                on ? 'bg-bubble text-paper' : done ? 'text-muted' : 'text-paper hover:bg-bubble/60',
+              )}
+            >
+              <span className={cx('flex h-4 w-4 shrink-0 items-center justify-center rounded-full', on ? 'bg-accent' : 'border border-line')}>
+                {on && <Check size={9} className="text-white" strokeWidth={3} />}
+              </span>
+              {o}
+            </button>
+          )
+        })}
+      </div>
+    </Shell>
+  )
+}
+
+const TASK_STATUS: Record<BuildTask['status'], string> = {
+  queued: 'Queued', running: 'Working', needs_review: 'Needs you', done: 'Done', failed: 'Failed',
+}
+
+/** Technical detail: every task with its owner, why it exists, and what it waits on. */
+const TaskList: React.FC<{ tasks: BuildTask[] }> = ({ tasks }) => {
+  const byId = Object.fromEntries(tasks.map((t) => [t.id, t]))
+  return (
+    <ul className="space-y-2">
+      {tasks.map((t) => {
+        const waiting = t.status === 'queued' ? (t.dependsOn ?? []).filter((d) => byId[d]?.status !== 'done') : []
+        return (
+          <li key={t.id} className="text-meta">
+            <div className="flex items-baseline gap-2">
+              <span className="w-16 shrink-0 text-muted">{agentById(t.channel).name}</span>
+              <span className="min-w-0 flex-1 truncate text-paper">{t.label}</span>
+              <span className={cx('shrink-0', t.status === 'needs_review' ? 'text-accentPurpleSoft' : t.status === 'failed' ? 'text-accentRed' : 'text-muted')}>
+                {TASK_STATUS[t.status]}
+              </span>
+            </div>
+            <p className="ml-[4.5rem] text-micro text-muted">
+              {waiting.length ? `Waiting on ${waiting.map((d) => byId[d].label.toLowerCase()).join(', ')}` : t.why}
+            </p>
+          </li>
+        )
+      })}
+    </ul>
   )
 }

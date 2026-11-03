@@ -77,7 +77,7 @@ export const PreviewPane: React.FC = () => {
        * the iframe `min-h-[520px]` inside an auto-height frame. The percentage
        * height could not resolve, so the iframe rendered at its 520px minimum
        * and the wrapper scrolled to reveal it — two scrollbars stacked, one for
-       * Architect's chrome and one for the generated document.
+       * Shipbuds's chrome and one for the generated document.
        *
        * Now the height chain terminates properly: this element is `flex-1
        * min-h-0`, the frame below it inherits a definite height, and the iframe
@@ -145,10 +145,10 @@ export const PreviewPane: React.FC = () => {
             <Button size="sm" className="whitespace-nowrap" onClick={() => navigate(`/demo/${projectId}`)}>
               <ExternalLink size={13} /> Open site
             </Button>
-            <Button size="sm" variant="ghost" className="whitespace-nowrap" onClick={() => { navigator.clipboard?.writeText(`${project?.name ?? 'app'}.architect.app`); setCopied(true) }}>
+            <Button size="sm" variant="ghost" className="whitespace-nowrap" onClick={() => { navigator.clipboard?.writeText(`${project?.name ?? 'app'}.shipbuds.app`); setCopied(true) }}>
               {copied ? <Check size={13} /> : <Copy size={13} />} {copied ? 'Copied' : 'Copy link'}
             </Button>
-            <span className="ml-auto min-w-0 truncate text-right font-mono text-[10px] text-muted">{project?.previewTemplateId}-preview.architect.app</span>
+            <span className="ml-auto min-w-0 truncate text-right font-mono text-[10px] text-muted">{project?.previewTemplateId}-preview.shipbuds.app</span>
           </>
         ) : mode === 'building' ? (
           <span className="flex items-center gap-2 text-[12px] text-muted">

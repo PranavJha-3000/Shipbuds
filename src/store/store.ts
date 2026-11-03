@@ -4,14 +4,14 @@ import type {
   Build, BuildTask, CanvasDoc, CanvasEl, ChannelId, Commit, DeployStatus,
   Deployment, GithubConn, GuardResult, ImportDraft, IntegrationId, Manager, Message,
   OnboardingState, OnboardingStep, PlanCardData, PreviewState, Project, Strategy,
-  Thread, User, MessageCard,
+  Thread, User, MessageCard, ClarifyCardData, Persona,
 } from './types'
 import { ONBOARDING_STEPS } from './types'
 import { CHANNEL_SCRIPTS, CHANNEL_REPLIES, MANAGER_DEFAULT, MANAGER_REPLIES } from './scripts'
 import {
   BUILD_NARRATION, MANAGER_BUILD_DONE, MANAGER_BUILD_INTRO, MANAGER_CONFIRM,
-  MANAGER_PLAN_INTRO, MANAGER_REVISION_INTRO, MANAGER_STRATEGY_INTRO,
-  planFor, titleFor, wantsBuild, wantsRevision, STRATEGY_OPTIONS,
+  MANAGER_PLAN_INTRO, MANAGER_REVISION_INTRO, MANAGER_STRATEGY_INTRO, MANAGER_CLARIFY_INTRO,
+  planFor, titleFor, wantsBuild, wantsRevision, STRATEGY_OPTIONS, clarifyFor, decisionFor,
 } from './scripts'
 import { agentById } from './roster'
 
@@ -65,6 +65,11 @@ interface AppState {
   createManager: (input: { nickname: string; avatar: string; templateId?: string }) => string
   setActiveManager: (id: string) => void
   managerSend: (projectId: string, text: string) => void
+  /** Resolve the clarify card: chosen option index per question, or null to skip. */
+  answerClarify: (projectId: string, answers: number[] | null) => void
+  /** Answer the decision card that paused the build. */
+  answerDecision: (projectId: string, choice: number) => void
+  setPersona: (p: Persona) => void
   managerRoute: (projectId: string, channels: ChannelId[]) => void
   pushManagerMessage: (projectId: string, text: string, kind?: Message['kind'], card?: MessageCard, routedTo?: ChannelId[]) => void
   /** Writes a user-authored turn into the Manager thread without running intent
@@ -135,15 +140,22 @@ function makeThread(kind: Thread['kind'], extra: Partial<Thread> = {}): Thread {
 
 const emptyProgress = (): Record<ChannelId, number> => ({ frontend: 0, backend: 0, 'ai-ml': 0, devops: 0, qa: 0 })
 
-const TASK_SEQUENCE: { label: string; channel: ChannelId }[] = [
-  { label: 'Scaffolding the project structure', channel: 'frontend' },
-  { label: 'Modelling records and seeding data', channel: 'backend' },
-  { label: 'Composing the dashboard layout', channel: 'frontend' },
-  { label: 'Wiring list and create endpoints', channel: 'backend' },
-  { label: 'Adding assisted suggestions', channel: 'ai-ml' },
-  { label: 'Preparing the build and deploy', channel: 'devops' },
-  { label: 'Running the first review pass', channel: 'qa' },
+const TASK_SEQUENCE: { id: string; label: string; channel: ChannelId; dependsOn: string[]; why: string }[] = [
+  { id: 'scaffold', label: 'Scaffolding the project structure', channel: 'frontend', dependsOn: [], why: 'Every screen builds on the app shell.' },
+  { id: 'data', label: 'Modelling records and seeding data', channel: 'backend', dependsOn: ['scaffold'], why: 'Screens need real records to show.' },
+  { id: 'layout', label: 'Composing the dashboard layout', channel: 'frontend', dependsOn: ['scaffold'], why: 'The main screen is what you see first.' },
+  { id: 'api', label: 'Wiring list and create endpoints', channel: 'backend', dependsOn: ['data'], why: 'Lets the screens save and load data.' },
+  { id: 'ai', label: 'Adding assisted suggestions', channel: 'ai-ml', dependsOn: ['api'], why: 'Optional suggestions on top of working data.' },
+  { id: 'ship', label: 'Preparing the build and deploy', channel: 'devops', dependsOn: ['layout', 'api'], why: 'Packages the app so it can go live.' },
+  { id: 'review', label: 'Running the first review pass', channel: 'qa', dependsOn: ['layout', 'api'], why: 'Catches problems before you rely on it.' },
 ]
+
+/** Which tasks each approach runs. Lean skips review, so it never pauses for a decision. */
+const STRATEGY_TASKS: Record<Strategy, string[]> = {
+  lean: ['scaffold', 'layout', 'api'],
+  balanced: ['scaffold', 'data', 'layout', 'api', 'review'],
+  enterprise: TASK_SEQUENCE.map((t) => t.id),
+}
 
 const GUARD_CHECKS = [
   { id: 'types', label: 'No `any` in public interfaces', status: 'pass' as const, detail: 'All exported types are explicit. No escape hatches used.' },
@@ -169,8 +181,13 @@ const FAIL_REASON =
   'The build ran out of memory while packaging images. This usually means one of your images is very large. Try compressing it, or remove an image you no longer use.'
 
 
-const initialTasks = (): BuildTask[] =>
-  TASK_SEQUENCE.map((t, i) => ({ id: `task_${i}`, label: t.label, channel: t.channel, agentId: t.channel, status: 'queued' as const, ts: Date.now() + i }))
+const initialTasks = (strategy: Strategy = 'enterprise'): BuildTask[] => {
+  const ids = STRATEGY_TASKS[strategy]
+  return TASK_SEQUENCE.filter((t) => ids.includes(t.id)).map((t, i) => ({
+    id: t.id, label: t.label, channel: t.channel, agentId: t.channel, status: 'queued' as const, ts: Date.now() + i,
+    dependsOn: t.dependsOn.filter((d) => ids.includes(d)), why: t.why,
+  }))
+}
 
 const pickTemplate = (intent: string) => {
   const t = intent.toLowerCase()
@@ -268,6 +285,101 @@ const revisionOf = (projectId: string): number => {
   const t = useStore.getState().threads[threadIdFor(projectId, 'manager')]
   if (!t) return 0
   return t.messages.filter((m) => m.card?.type === 'plan').length
+}
+
+const managerThreadOf = (projectId: string) => useStore.getState().threads[threadIdFor(projectId, 'manager')]
+
+/** Manager presents the plan + approach cards, folding in clarify answers. */
+const presentPlan = (projectId: string) => {
+  const project = useStore.getState().projects.find((p) => p.id === projectId)
+  if (!project) return
+  const plan = planFor(project.intent)
+  const features = [...plan.features, ...(project.clarified ?? []).filter((f) => !plan.features.includes(f))]
+  useStore.setState((s) => ({
+    projects: s.projects.map((p) => (p.id === projectId ? { ...p, planState: 'planned', description: plan.summary || p.name } : p)),
+  }))
+  setTimeout(() => {
+    useStore.getState().pushManagerMessage(projectId, MANAGER_PLAN_INTRO, 'text')
+    setTimeout(() => {
+      useStore.getState().pushManagerMessage(projectId, '', 'plan', {
+        type: 'plan', title: project.name, summary: '', features, team: plan.team, flow: plan.flow,
+        strategy: project.strategy, revision: 1,
+      })
+      setTimeout(() => useStore.getState().pushManagerMessage(projectId, MANAGER_STRATEGY_INTRO, 'strategy', {
+        type: 'strategy', selected: project.strategy, options: STRATEGY_OPTIONS,
+      }), 600)
+    }, 500)
+  }, 700)
+}
+
+/** Resolves the open clarify card. `answers` null = keep the Manager's defaults. */
+const resolveClarify = (projectId: string, answers: number[] | null, how: 'answered' | 'skipped') => {
+  const tid = threadIdFor(projectId, 'manager')
+  const msg = managerThreadOf(projectId)?.messages.find((m) => m.card?.type === 'clarify' && !m.card.resolved)
+  if (!msg || msg.card?.type !== 'clarify') return null
+  const questions = msg.card.questions.map((q, i) => ({ ...q, selected: answers?.[i] ?? q.selected }))
+  const card: ClarifyCardData = { ...msg.card, questions, resolved: how }
+  const adds = questions.map((q) => q.options[q.selected]?.adds).filter((a): a is string => !!a)
+  useStore.setState((s) => ({
+    threads: { ...s.threads, [tid]: { ...s.threads[tid], typing: true, messages: s.threads[tid].messages.map((m) => (m.id === msg.id ? { ...m, card } : m)) } },
+    projects: s.projects.map((p) => (p.id === projectId ? { ...p, clarified: adds } : p)),
+  }))
+  return questions
+}
+
+/** Runs build task `i` onward. Pauses on QA review until the user answers the decision card. */
+const runBuild = (projectId: string, i: number) => {
+  const st = useStore.getState()
+  const b = st.builds[projectId]
+  if (!b || b.state !== 'building' || b.awaiting) return
+  const count = b.tasks.length
+  const order = [...new Set(b.tasks.slice(0, Math.min(i + 1, count)).map((t) => t.channel))]
+
+  if (i >= count) {
+    useStore.setState((s) => ({
+      builds: { ...s.builds, [projectId]: { ...s.builds[projectId], state: 'live', currentTask: 'Build complete', tasks: s.builds[projectId].tasks.map((t) => ({ ...t, status: 'done' as const })) } },
+      previews: { ...s.previews, [projectId]: { ...s.previews[projectId], mode: 'live', revealed: 100 } },
+      projects: s.projects.map((p) => (p.id === projectId ? { ...p, status: 'live', planState: 'live' } : p)),
+    }))
+    st.runGuard(projectId)
+    st.pushManagerMessage(projectId, MANAGER_BUILD_DONE, 'build', {
+      type: 'build', state: 'live', task: 'Build complete', progress: s_progress(projectId), order,
+    })
+    return
+  }
+
+  const task = b.tasks[i]
+  useStore.setState((s) => {
+    const cur = s.builds[projectId]
+    const tasks = cur.tasks.map((t, idx) => (idx < i ? { ...t, status: 'done' as const } : idx === i ? { ...t, status: 'running' as const } : t))
+    const progress = { ...cur.progress, [task.channel]: Math.min(100, Math.round(((i + 0.6) / count) * 100)) }
+    const done = tasks.filter((t) => t.status === 'done').length
+    return {
+      builds: { ...s.builds, [projectId]: { ...cur, tasks, progress, currentTask: task.label } },
+      previews: { ...s.previews, [projectId]: { ...s.previews[projectId], revealed: Math.round((done / count) * 100) } },
+    }
+  })
+  // The Manager introduces whoever is needed for this step.
+  st.managerRoute(projectId, [task.channel])
+  st.pushManagerMessage(projectId, BUILD_NARRATION[task.label] ?? `${agentById(task.channel).name} is working.`, 'build', {
+    type: 'build', state: 'building', task: task.label, progress: s_progress(projectId), order,
+  })
+
+  if (task.id === 'review') {
+    setTimeout(() => {
+      const project = useStore.getState().projects.find((p) => p.id === projectId)
+      const d = decisionFor(project?.intent ?? '')
+      useStore.setState((s) => ({
+        builds: { ...s.builds, [projectId]: { ...s.builds[projectId], awaiting: task.id, currentTask: 'Waiting on your decision',
+          tasks: s.builds[projectId].tasks.map((t) => (t.id === task.id ? { ...t, status: 'needs_review' as const } : t)) } },
+      }))
+      useStore.getState().pushManagerMessage(projectId, 'QA needs your call before sign-off.', 'decision', {
+        type: 'decision', from: 'qa', taskId: task.id, question: d.question, options: d.options,
+      })
+    }, 1300)
+    return
+  }
+  setTimeout(() => runBuild(projectId, i + 1), 1300)
 }
 
 export const useStore = create<AppState>()(
@@ -426,8 +538,9 @@ export const useStore = create<AppState>()(
           const intro = MANAGER_REVISION_INTRO[Math.floor(Math.random() * MANAGER_REVISION_INTRO.length)]
           get().pushManagerMessage(projectId, intro, 'text')
           setTimeout(() => {
+            const features = [...plan.features, ...(project.clarified ?? []).filter((f) => !plan.features.includes(f))]
             get().pushManagerMessage(projectId, plan.summary, 'plan', {
-              type: 'plan', title: plan.title, summary: '', features: plan.features,
+              type: 'plan', title: plan.title, summary: '', features,
               team: plan.team, flow: plan.flow, strategy, revision: revisionOf(projectId) + 1,
             })
           }, 500)
@@ -538,26 +651,23 @@ export const useStore = create<AppState>()(
 
         // 1. First real instruction: Manager plans.
         if (project.planState === 'briefing') {
-          const plan = planFor(text)
-          const name = plan.title
+          const name = titleFor(text)
           set((s) => ({
             projects: s.projects.map((p) => (p.id === projectId
-              ? { ...p, name, intent: text, description: plan.summary || name, previewTemplateId: pickTemplate(text), planState: 'planned' }
+              ? { ...p, name, intent: text, description: name, previewTemplateId: pickTemplate(text), planState: 'clarifying' }
               : p)),
           }))
-          respond(() => {
-            get().pushManagerMessage(projectId, MANAGER_PLAN_INTRO, 'text')
-            setTimeout(() => {
-              get().pushManagerMessage(projectId, '', 'plan', {
-                type: 'plan', title: plan.title, summary: '',
-                features: plan.features, team: plan.team, flow: plan.flow,
-                strategy: project.strategy, revision: 1,
-              })
-              setTimeout(() => get().pushManagerMessage(projectId, MANAGER_STRATEGY_INTRO, 'strategy', {
-                type: 'strategy', selected: project.strategy, options: STRATEGY_OPTIONS,
-              }), 600)
-            }, 500)
-          })
+          respond(() => get().pushManagerMessage(projectId, MANAGER_CLARIFY_INTRO, 'clarify', {
+            type: 'clarify', questions: clarifyFor(text),
+          }))
+          return
+        }
+
+        // 1b. Typing while the clarify card is open: treat it as extra context, keep defaults.
+        if (project.planState === 'clarifying') {
+          set((s) => ({ projects: s.projects.map((p) => (p.id === projectId ? { ...p, intent: `${p.intent}. ${text}` } : p)) }))
+          resolveClarify(projectId, null, 'skipped')
+          presentPlan(projectId)
           return
         }
 
@@ -588,6 +698,38 @@ export const useStore = create<AppState>()(
           }
         })
       },
+
+      answerClarify: (projectId, answers) => {
+        const questions = resolveClarify(projectId, answers, answers ? 'answered' : 'skipped')
+        if (!questions) return
+        const echo = answers ? questions.map((q) => q.options[q.selected].label).join(' · ') : 'Use your best judgement'
+        get().pushUserMessage(projectId, echo)
+        get().setTyping(threadIdFor(projectId, 'manager'), true)
+        presentPlan(projectId)
+      },
+
+      answerDecision: (projectId, choice) => {
+        const b = get().builds[projectId]
+        const tid = threadIdFor(projectId, 'manager')
+        if (!b?.awaiting) return
+        const taskId = b.awaiting
+        const msg = get().threads[tid]?.messages.find((m) => m.card?.type === 'decision' && m.card.taskId === taskId && m.card.selected === undefined)
+        if (!msg || msg.card?.type !== 'decision') return
+        const card = { ...msg.card, selected: choice }
+        set((s) => ({
+          threads: { ...s.threads, [tid]: { ...s.threads[tid], messages: s.threads[tid].messages.map((m) => (m.id === msg.id ? { ...m, card } : m)) } },
+          builds: { ...s.builds, [projectId]: { ...s.builds[projectId], awaiting: undefined,
+            tasks: s.builds[projectId].tasks.map((t) => (t.id === taskId ? { ...t, status: 'running' as const } : t)) } },
+        }))
+        get().pushUserMessage(projectId, card.options[choice])
+        const next = get().builds[projectId].tasks.findIndex((t) => t.id === taskId) + 1
+        setTimeout(() => {
+          get().pushManagerMessage(projectId, `Got it. ${agentById(card.from).name} will check for that before sign-off.`, 'text')
+          setTimeout(() => runBuild(projectId, next), 900)
+        }, 700)
+      },
+
+      setPersona: (persona) => set((s) => (s.user ? { user: { ...s.user, persona } } : {})),
 
       // Dynamic team formation: a specialist thread is created ONLY here.
       managerRoute: (projectId, channels) => {
@@ -675,57 +817,20 @@ export const useStore = create<AppState>()(
 
       // ---- Build engine: narration happens IN the Manager conversation ----
       startBuild: (projectId) => {
+        // A second timer chain would interleave with the first and orphan its decision card.
+        if (get().builds[projectId]?.state === 'building') return
         const now = Date.now()
+        const strategy = get().projects.find((p) => p.id === projectId)?.strategy ?? 'balanced'
+        const tasks = initialTasks(strategy)
         set((s) => ({
-          builds: { ...s.builds, [projectId]: { projectId, state: 'building', tasks: initialTasks(), progress: emptyProgress(), currentTask: TASK_SEQUENCE[0].label, startedAt: now, failedReason: '' } },
+          builds: { ...s.builds, [projectId]: { projectId, state: 'building', tasks, progress: emptyProgress(), currentTask: tasks[0].label, startedAt: now, failedReason: '' } },
           previews: { ...s.previews, [projectId]: { projectId, mode: 'building', viewport: 'desktop', revealed: 0 } },
           projects: s.projects.map((p) => (p.id === projectId ? { ...p, status: 'building', planState: 'building' } : p)),
         }))
         get().pushManagerMessage(projectId, MANAGER_BUILD_INTRO, 'build', {
-          type: 'build', state: 'building', task: TASK_SEQUENCE[0].label, progress: emptyProgress(), order: [],
+          type: 'build', state: 'building', task: tasks[0].label, progress: emptyProgress(), order: [],
         })
-
-        const strategy = get().projects.find((p) => p.id === projectId)?.strategy ?? 'balanced'
-        const count = strategy === 'lean' ? 3 : strategy === 'balanced' ? 5 : 7
-        const order: string[] = []
-        let i = 0
-        const advance = () => {
-          if (i >= count) {
-            set((s) => ({
-              builds: { ...s.builds, [projectId]: { ...s.builds[projectId], state: 'live', currentTask: 'Build complete' } },
-              previews: { ...s.previews, [projectId]: { ...s.previews[projectId], mode: 'live', revealed: 100 } },
-              projects: s.projects.map((p) => (p.id === projectId ? { ...p, status: 'live', planState: 'live' } : p)),
-            }))
-            get().runGuard(projectId)
-            get().pushManagerMessage(projectId, MANAGER_BUILD_DONE, 'build', {
-              type: 'build', state: 'live', task: 'Build complete',
-              progress: s_progress(projectId), order,
-            })
-            return
-          }
-          const task = get().builds[projectId]?.tasks[i]
-          if (task) {
-            set((s) => {
-              const b = s.builds[projectId]
-              const tasks = b.tasks.map((t, idx) => (idx < i ? { ...t, status: 'done' as const } : idx === i ? { ...t, status: 'running' as const } : t))
-              const progress = { ...b.progress, [task.channel]: Math.min(100, Math.round(((i + 0.6) / count) * 100)) }
-              const done = tasks.filter((t) => t.status === 'done').length
-              return {
-                builds: { ...s.builds, [projectId]: { ...b, tasks, progress, currentTask: task.label } },
-                previews: { ...s.previews, [projectId]: { ...s.previews[projectId], revealed: Math.round((done / count) * 100) } },
-              }
-            })
-            // The Manager introduces whoever is needed for this step.
-            get().managerRoute(projectId, [task.channel])
-            if (!order.includes(task.channel)) order.push(task.channel)
-            get().pushManagerMessage(projectId, BUILD_NARRATION[task.label] ?? `${agentById(task.channel).name} is working.`, 'build', {
-              type: 'build', state: 'building', task: task.label, progress: s_progress(projectId), order: [...order],
-            })
-          }
-          i++
-          setTimeout(advance, 1300)
-        }
-        setTimeout(advance, 900)
+        setTimeout(() => runBuild(projectId, 0), 900)
       },
 
       tickBuild: () => {},
@@ -792,7 +897,7 @@ export const useStore = create<AppState>()(
           [projectId]: {
             connected: true, account: 'pranav-dev', repo, branch: 'main',
             commits: [
-              { id: 'c0', hash: shortHash(), message: 'Initial commit from Architect', author: 'Manager', ts: Date.now() - 86400000 * 3 },
+              { id: 'c0', hash: shortHash(), message: 'Initial commit from Shipbuds', author: 'Manager', ts: Date.now() - 86400000 * 3 },
               { id: 'c1', hash: shortHash(), message: 'Add project scaffold and routing', author: 'Frontend', ts: Date.now() - 86400000 * 2 },
               { id: 'c2', hash: shortHash(), message: 'Seed data layer with local records', author: 'Backend', ts: Date.now() - 3600000 * 20 },
             ],
@@ -842,7 +947,7 @@ export const useStore = create<AppState>()(
         const version = (get().deployments[projectId]?.length ?? 0) + 1
         const dep: Deployment = {
           id: uid('d'), version, env, status: 'running', failureReason: '',
-          url: '', logs: [`$ architect deploy --env ${env} --version v${version}`], createdAt: Date.now(),
+          url: '', logs: [`$ shipbuds deploy --env ${env} --version v${version}`], createdAt: Date.now(),
         }
         set((s) => ({ deployments: { ...s.deployments, [projectId]: [dep, ...(s.deployments[projectId] ?? [])] } }))
         DEPLOY_LOGS.forEach((line, i) => setTimeout(() => get().pushDeployLog(projectId, line), 600 + i * 750))
@@ -860,7 +965,7 @@ export const useStore = create<AppState>()(
             get().pushToast('Deploy failed — see the reason in Deploy')
           } else {
             const slug = (get().projects.find((p) => p.id === projectId)?.name ?? 'app').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-            const url = `${slug}-v${version}.architect.app`
+            const url = `${slug}-v${version}.shipbuds.app`
             set((s) => ({
               deployments: {
                 ...s.deployments,
@@ -885,7 +990,7 @@ export const useStore = create<AppState>()(
         const dep: Deployment = {
           id: uid('d'), version: next, env: target.env, status: 'success', failureReason: '',
           url: target.url ? target.url.replace(/v\d+$/, `v${next}`) : '',
-          logs: [`$ architect rollback --to v${version}`, 'Restoring previous version…', `✓ Rolled back to v${version} as v${next}`],
+          logs: [`$ shipbuds rollback --to v${version}`, 'Restoring previous version…', `✓ Rolled back to v${version} as v${next}`],
           createdAt: Date.now(), rolledBackFrom: version,
         }
         set((s) => ({ deployments: { ...s.deployments, [projectId]: [dep, ...list] } }))
@@ -956,7 +1061,7 @@ export const useStore = create<AppState>()(
             [id]: {
               connected: true, account: 'pranav-dev', repo: 'habit-tracker', branch: 'main',
               commits: [
-                { id: 'c0', hash: 'a3f91c2', message: 'Initial commit from Architect', author: 'Manager', ts: now - 86400000 * 2 },
+                { id: 'c0', hash: 'a3f91c2', message: 'Initial commit from Shipbuds', author: 'Manager', ts: now - 86400000 * 2 },
                 { id: 'c1', hash: '7b2e40d', message: 'Add project scaffold and routing', author: 'Frontend', ts: now - 86400000 },
                 { id: 'c2', hash: 'c91d5aa', message: 'Seed data layer with local records', author: 'Backend', ts: now - 3600000 * 20 },
                 { id: 'c3', hash: 'e04b7f1', message: 'Review pass: fix long-text overflow', author: 'QA', ts: now - 3600000 * 6 },
@@ -967,8 +1072,8 @@ export const useStore = create<AppState>()(
           deployments: {
             ...s.deployments,
             [id]: [
-              { id: 'd1', version: 2, env: 'preview', status: 'success', failureReason: '', url: 'habit-tracker-v2.architect.app', logs: [...DEPLOY_LOGS, '✓ Live at habit-tracker-v2.architect.app'], createdAt: now - 3600000 * 5 },
-              { id: 'd0', version: 1, env: 'preview', status: 'success', failureReason: '', url: 'habit-tracker-v1.architect.app', logs: [...DEPLOY_LOGS, '✓ Live at habit-tracker-v1.architect.app'], createdAt: now - 3600000 * 28 },
+              { id: 'd1', version: 2, env: 'preview', status: 'success', failureReason: '', url: 'habit-tracker-v2.shipbuds.app', logs: [...DEPLOY_LOGS, '✓ Live at habit-tracker-v2.shipbuds.app'], createdAt: now - 3600000 * 5 },
+              { id: 'd0', version: 1, env: 'preview', status: 'success', failureReason: '', url: 'habit-tracker-v1.shipbuds.app', logs: [...DEPLOY_LOGS, '✓ Live at habit-tracker-v1.shipbuds.app'], createdAt: now - 3600000 * 28 },
             ],
           },
         }))

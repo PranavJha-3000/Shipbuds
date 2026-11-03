@@ -33,12 +33,12 @@ export const Onboarding: React.FC<{ onDone: () => void }> = ({ onDone }) => {
         >
           <img
             src={ASSETS.animations.onboardingWelcome}
-            alt="The Architect AI assistant mascot"
+            alt="The Shipbuds AI assistant mascot"
             className="gif-mono block h-auto w-[180px]"
           />
         </div>
         <h1 className="mt-9 text-[30px] font-semibold tracking-tight text-white sm:text-[36px]">
-          Welcome to Architect 2.0
+          Welcome to Shipbuds
         </h1>
         <p className="mt-3 max-w-[38ch] text-[15px] leading-relaxed" style={{ color: 'var(--grok-text-muted)' }}>
           Build software by talking to your AI engineering team.
@@ -84,7 +84,7 @@ export const Onboarding: React.FC<{ onDone: () => void }> = ({ onDone }) => {
           Connect the tools you already use.
         </h1>
         <p className="mt-2.5 text-[14px]" style={{ color: 'var(--grok-text-muted)' }}>
-          Bring your existing workflow into Architect.
+          Bring your existing workflow into Shipbuds.
         </p>
 
         <div className="mt-8 flex w-full flex-col gap-2">

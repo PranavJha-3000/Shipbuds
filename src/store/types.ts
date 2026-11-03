@@ -6,11 +6,12 @@ export type Viewport = 'desktop' | 'tablet' | 'mobile'
 export type AuthMethod = 'google' | 'password' | 'guest'
 export type Persona = 'technical' | 'non-technical'
 export type ThreadKind = 'manager' | 'channel' | 'dm'
-export type MessageKind = 'text' | 'delegation' | 'plan' | 'strategy' | 'build' | 'system'
+export type MessageKind = 'text' | 'delegation' | 'plan' | 'strategy' | 'build' | 'clarify' | 'decision' | 'system'
 /** Where a project is in the chat-first lifecycle. */
-export type PlanState = 'briefing' | 'planned' | 'building' | 'live'
+export type PlanState = 'briefing' | 'clarifying' | 'planned' | 'building' | 'live'
 export type ChannelId = 'frontend' | 'backend' | 'ai-ml' | 'devops' | 'qa'
-export type TaskStatus = 'queued' | 'running' | 'done' | 'failed'
+/** `needs_review` pauses the build until the user answers a decision card. */
+export type TaskStatus = 'queued' | 'running' | 'needs_review' | 'done' | 'failed'
 
 export interface User {
   id: string
@@ -57,6 +58,8 @@ export interface Project {
   /** Short human description shown under the project name in the drawer. */
   description: string
   importSource?: 'native' | 'github' | 'zip' | 'paste'
+  /** Plan features added by clarify answers; kept across plan revisions. */
+  clarified?: string[]
   thumbnailHue: number
 }
 
@@ -86,7 +89,39 @@ export interface BuildCardData {
   order: string[]
 }
 
-export type MessageCard = PlanCardData | StrategyCardData | BuildCardData
+export interface ClarifyOption {
+  label: string
+  /** Plan feature this answer adds, if any. */
+  adds?: string
+}
+
+export interface ClarifyQuestion {
+  id: string
+  q: string
+  options: ClarifyOption[]
+  /** Index of the chosen option — pre-set to the Manager's default. */
+  selected: number
+}
+
+/** Manager's clarifying questions, asked before the plan. */
+export interface ClarifyCardData {
+  type: 'clarify'
+  questions: ClarifyQuestion[]
+  /** 'answered' | 'skipped' once the user responds. */
+  resolved?: 'answered' | 'skipped'
+}
+
+/** A specialist needs the user to decide something before the build continues. */
+export interface DecisionCardData {
+  type: 'decision'
+  from: ChannelId
+  taskId: string
+  question: string
+  options: string[]
+  selected?: number
+}
+
+export type MessageCard = PlanCardData | StrategyCardData | BuildCardData | ClarifyCardData | DecisionCardData
 
 export interface Agent {
   id: string
@@ -131,6 +166,10 @@ export interface BuildTask {
   channel: ChannelId
   status: TaskStatus
   ts: number
+  /** Task ids that must finish first. */
+  dependsOn?: string[]
+  /** One sentence: why this task exists. */
+  why?: string
 }
 
 export interface Build {
@@ -141,6 +180,8 @@ export interface Build {
   currentTask: string
   startedAt: number
   failedReason: string
+  /** Task id waiting on a user decision; the build pauses while set. */
+  awaiting?: string
 }
 
 export interface PreviewState {

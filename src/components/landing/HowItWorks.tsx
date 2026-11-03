@@ -34,7 +34,7 @@ const Artifact: React.FC<{ step: string }> = ({ step }) => {
   return (
     <div className="overflow-hidden rounded-sm border border-line bg-ink">
       <CommitRow hash="a3f9c1" message="Portal v2 — invoices + files" meta="Manager · just now" status="success" />
-      <p className="border-t border-line px-3 py-2 font-mono text-[10px] text-faint">portal-v2.architect.app</p>
+      <p className="border-t border-line px-3 py-2 font-mono text-[10px] text-faint">portal-v2.shipbuds.app</p>
     </div>
   )
 }
@@ -54,7 +54,7 @@ export const HowItWorks: React.FC = () => (
               <p className="mt-1.5 max-w-md text-body leading-relaxed text-muted">{s.desc}</p>
             </Reveal>
             <Reveal delay={60}>
-              <MockShell url={`architect.app — ${s.label.toLowerCase()}`}>
+              <MockShell url={`shipbuds.app — ${s.label.toLowerCase()}`}>
                 <div className="p-3">
                   <Artifact step={s.n} />
                 </div>

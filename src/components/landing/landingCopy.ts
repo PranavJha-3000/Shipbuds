@@ -5,7 +5,7 @@ export const COPY = {
     start: 'Start building',
   },
   hero: {
-    eyebrow: 'ARCHITECT 2.0',
+    eyebrow: 'SHIPBUDS',
     headline: 'Vibe coding feels like a group chat.',
     sub: 'You talk to a Manager, the Manager brings in specialist agents, and the team plans, builds, reviews, previews, and ships your product.',
     primary: 'Start building',
@@ -20,12 +20,12 @@ export const COPY = {
     { n: '06', label: 'Ship', desc: 'code, GitHub, deploy' },
   ],
   why: {
-    eyebrow: 'WHY ARCHITECT',
+    eyebrow: 'WHY SHIPBUDS',
     title: 'One Manager. A team that actually builds.',
-    body: 'Asking an AI to write code gives you text. Working with Architect gives you coordination: the Manager scopes the work, routes it to Frontend, Backend, AI / ML, QA and DevOps, and returns one reviewed result.',
+    body: 'Asking an AI to write code gives you text. Working with Shipbuds gives you coordination: the Manager scopes the work, routes it to Frontend, Backend, AI / ML, QA and DevOps, and returns one reviewed result.',
     points: [
       { k: 'Code generator', v: 'You prompt. It prints files. You integrate everything.' },
-      { k: 'Architect team', v: 'You describe. The Manager plans, routes, reviews, and ships.' },
+      { k: 'Shipbuds team', v: 'You describe. The Manager plans, routes, reviews, and ships.' },
     ],
   },
   how: {
@@ -74,12 +74,12 @@ export const COPY = {
     eyebrow: 'SHIP',
     title: 'From conversation to production.',
     body: 'One chain from chat to live URL. Simulated in this build so you can review the full path honestly.',
-    chain: ['Architect', 'Code', 'GitHub', 'Deploy', 'Live URL'],
+    chain: ['Shipbuds', 'Code', 'GitHub', 'Deploy', 'Live URL'],
     honesty: 'GitHub and Deploy are simulated in this build — commits, conflicts and deploy logs behave like the real flow. No real account is accessed.',
   },
   trust: {
     eyebrow: 'TRANSPARENCY',
-    title: 'What Architect actually does.',
+    title: 'What Shipbuds actually does.',
     items: [
       { t: 'Local-first state', d: 'Projects, conversations, builds and previews stay isolated in this browser (localStorage, architect-store).' },
       { t: 'Clearly simulated integrations', d: 'GitHub and Deploy are labelled simulated wherever they appear.' },
@@ -94,7 +94,7 @@ export const COPY = {
     secondary: 'Explore the workspace',
   },
   footer: {
-    brand: 'Architect 2.0',
+    brand: 'Shipbuds',
     by: 'Lyzr AI',
     cols: [
       { h: 'Product', links: ['How it works', 'Canvas', 'Preview', 'Deploy'] },

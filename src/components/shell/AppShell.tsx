@@ -27,7 +27,7 @@ import { useStore } from '../../store/store'
  * Notes the return from an external tab back into the Manager conversation.
  *
  * Mounted here rather than inside the right panel so it keeps working when
- * Canvas hides the panel. The only signal used is Architect regaining
+ * Canvas hides the panel. The only signal used is Shipbuds regaining
  * visibility or focus — we never claim anything about what happened in the
  * other tab, because cross-origin that cannot be known.
  */

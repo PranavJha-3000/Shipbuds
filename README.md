@@ -1,4 +1,4 @@
-# Shipmate
+# Shipbuds
 
 A vibe-coding platform that feels like talking to an AI engineering team rather than one giant chatbot.
 
@@ -10,6 +10,7 @@ Manager is the primary interface. Work is routed to specialist team channels (`#
 npm install
 npm run dev      # http://localhost:5173
 npm run build    # typecheck + production build
+npm test         # Vitest: store-level Manager flow
 ```
 
 ## Core loop
@@ -18,8 +19,9 @@ npm run build    # typecheck + production build
 
 1. Sign in — email, mocked Google chooser, or guest. A fresh account goes through onboarding (welcome → vibe coding → integrations → meet the Manager).
 2. The workspace opens on Home. Create a project or pick one from the project drawer; each project opens its own Manager conversation.
-3. Describe what you want. The Manager answers with a **Plan** card and then an **Approach** card: **Lean**, **Balanced** (recommended) or **Enterprise** — each showing its agent composition.
-4. Press **Start building**. The Preview pane reveals section by section while the Manager narrates progress and brings each specialist in as the work needs them.
+3. Describe what you want. The Manager first asks up to three **Quick questions** (defaults pre-picked; "Let the Manager decide" or just keep typing to skip), then answers with a **Plan** card and then an **Approach** card: **Lean**, **Balanced** (recommended) or **Enterprise** — each showing its agent composition.
+4. Press **Start building**. The Preview pane reveals section by section while the Manager narrates progress and brings each specialist in as the work needs them. The **Team strip** in the top bar shows each active specialist's status. On Balanced and Enterprise, QA pauses the build with a **Needs you** card until you decide; Lean never pauses.
+   Turn on **Show technical detail** (account menu) to see every task's owner, reason and dependencies inside the Build card.
 5. Open the specialist channels or DM a specialist directly, refine visually in Canvas, read the generated files in Code, commit in GitHub, then deploy — with version history and rollback.
 
 ## Coverage
@@ -78,7 +80,8 @@ Intentionally simulated so the whole product is demonstrable without infrastruct
 - The GitHub connection, commits, hashes and push conflict (no API, no git, no remote)
 - Deployment: logs, live URLs and failures (the QR encodes the shown URL; **Open site** opens an in-app demo route)
 - Architect Guard checks (advisory only — findings never block a build)
-- Manager routing, specialist replies and build tasks (scripted data, not a model or an agent runtime)
+- Manager routing, clarifying questions, the QA decision, specialist replies and build tasks (scripted data, not a model or an agent runtime)
+- Repository import analysis (labelled as a demo in the UI; nothing is fetched)
 - Screenshot/sketch-to-UI conversion in Canvas (the uploaded file is never read)
 
 Everything the app stores lives in `localStorage`, so returning to a project resumes exactly where you left off. See `docs/architecture/architecture.md` for the full description and the list of known limitations.

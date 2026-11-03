@@ -4,7 +4,7 @@ import { agentById } from '../../store/roster'
 import type { Message } from '../../store/types'
 import { Identity, SpecialistIdentity } from '../ui/Identity'
 import { cx } from '../ui/cx'
-import { PlanCard, StrategyCard, BuildCard } from './Cards'
+import { PlanCard, StrategyCard, BuildCard, ClarifyCard, DecisionCard } from './Cards'
 import { displayName } from './grouping'
 import { ArrowUpRight } from 'lucide-react'
 
@@ -118,6 +118,8 @@ export const MessageBubble: React.FC<{
             {message.card.type === 'plan' && <PlanCard card={message.card} />}
             {message.card.type === 'strategy' && <StrategyCard card={message.card} />}
             {message.card.type === 'build' && <BuildCard card={message.card} />}
+            {message.card.type === 'clarify' && <ClarifyCard card={message.card} />}
+            {message.card.type === 'decision' && <DecisionCard card={message.card} />}
           </div>
         )}
       </div>

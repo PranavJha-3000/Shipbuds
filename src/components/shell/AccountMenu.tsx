@@ -3,7 +3,7 @@ import { useStore } from '../../store/store'
 import { ImportWizard } from '../import/ImportWizard'
 import { ArchivedModal } from './ArchivedModal'
 import { Popover, MenuItem } from '../ui/Popover'
-import { FolderInput, Archive, LogOut } from 'lucide-react'
+import { FolderInput, Archive, LogOut, Wrench } from 'lucide-react'
 
 /**
  * Account menu — the last of the three bespoke menu implementations, now on
@@ -17,6 +17,8 @@ import { FolderInput, Archive, LogOut } from 'lucide-react'
 export const AccountMenu: React.FC = () => {
   const user = useStore((s) => s.user)
   const signOut = useStore((s) => s.signOut)
+  const setPersona = useStore((s) => s.setPersona)
+  const technical = user?.persona === 'technical'
   const [importOpen, setImportOpen] = React.useState(false)
   const [archivedOpen, setArchivedOpen] = React.useState(false)
 
@@ -47,6 +49,12 @@ export const AccountMenu: React.FC = () => {
           icon={<Archive size={14} />}
           label="Archived"
           onClick={() => setArchivedOpen(true)}
+        />
+        <MenuItem
+          icon={<Wrench size={14} />}
+          label="Show technical detail"
+          checked={technical}
+          onClick={() => setPersona(technical ? 'non-technical' : 'technical')}
         />
         <MenuItem icon={<LogOut size={14} />} label="Sign out" onClick={() => signOut()} />
       </Popover>

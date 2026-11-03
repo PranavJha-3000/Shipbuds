@@ -7,7 +7,7 @@
  *   track, so Close could never work).
  * - Close: only ever closes a window this app opened for that exact key.
  *   Never closes arbitrary user tabs. Browser refusal (cross-origin) fails
- *   silently so Architect is never affected. Never touches `window.location`,
+ *   silently so Shipbuds is never affected. Never touches `window.location`,
  *   so the app never navigates away from the current project.
  */
 const handles = new Map<string, Window | null>()
@@ -108,10 +108,10 @@ export function openedKeys(prefix?: string): string[] {
 }
 
 /**
- * Return-to-Architect detection.
+ * Return-to-Shipbuds detection.
  *
  * The only two signals observable across a cross-origin tab handoff are
- * `window.closed` and Architect regaining focus/visibility. We never infer
+ * `window.closed` and Shipbuds regaining focus/visibility. We never infer
  * whether the user finished watching — that cannot be known cross-origin and
  * must not be claimed.
  */
@@ -128,7 +128,7 @@ function bindReturnListeners(): void {
   window.addEventListener('focus', () => returnListeners.forEach((l) => l()))
 }
 
-/** Fires when Architect becomes visible or focused again. */
+/** Fires when Shipbuds becomes visible or focused again. */
 export function onReturnToArchitect(fn: ReturnListener): () => void {
   returnListeners.add(fn)
   bindReturnListeners()

@@ -14,7 +14,7 @@ export const INTEGRATIONS: IntegrationDef[] = [
       {
         key: 'account',
         title: 'Choose an account',
-        description: 'Pick the GitHub account Architect should work from.',
+        description: 'Pick the GitHub account Shipbuds should work from.',
         options: [
           { id: 'gh1', title: 'Pranav Jha', sub: 'pranav.jha@gmail.com' },
           { id: 'gh2', title: 'Pranav (work)', sub: 'pranav@studio.dev' },
@@ -60,7 +60,7 @@ export const INTEGRATIONS: IntegrationDef[] = [
         title: 'Choose a project',
         description: 'Backend projects can use this database as a starting point.',
         options: [
-          { id: 's1', title: 'architect-dev', sub: 'Free tier · 1.2 GB used' },
+          { id: 's1', title: 'shipbuds-dev', sub: 'Free tier · 1.2 GB used' },
           { id: 's2', title: 'client-apps', sub: 'Pro · 8.4 GB used' },
         ],
       },
@@ -69,12 +69,12 @@ export const INTEGRATIONS: IntegrationDef[] = [
   {
     id: 'figma',
     name: 'Figma',
-    description: 'Bring designs into Architect.',
+    description: 'Bring designs into Shipbuds.',
     phases: [
       {
         key: 'account',
         title: 'Choose an account',
-        description: 'Architect can import frames you have access to.',
+        description: 'Shipbuds can import frames you have access to.',
         options: [
           { id: 'f1', title: 'Pranav Jha', sub: 'pranav.jha@gmail.com' },
           { id: 'f2', title: 'Studio Design', sub: 'figma.com/studio-design' },

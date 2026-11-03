@@ -7,7 +7,7 @@
  * serialised. The existing `externalTabs.ts` module is the same precedent.
  *
  * Survives Preview unmounts (Canvas hides the right panel) and route changes
- * within the session, so returning to Architect always resumes mid-flow.
+ * within the session, so returning to Shipbuds always resumes mid-flow.
  */
 import { useEffect, useState } from 'react'
 import type { VibingSource, ClassifiedLink } from './links'
@@ -180,7 +180,7 @@ export function useVibingSession(): Session {
 }
 
 /**
- * Increments each time Architect regains visibility or focus, so a consumer can
+ * Increments each time Shipbuds regains visibility or focus, so a consumer can
  * note the return in chat once. Never used to infer that anything was watched.
  */
 export function useReturnSignal(): number {

@@ -50,7 +50,7 @@ export const Auth: React.FC = () => {
       <div className="relative w-full max-w-[360px]">
         <div className="mb-8 flex flex-col items-center text-center">
           <LogoPlaceholder />
-          <h1 className="mt-6 text-[20px] font-semibold tracking-tight text-paper">Architect 2.0</h1>
+          <h1 className="mt-6 text-[20px] font-semibold tracking-tight text-paper">Shipbuds</h1>
           <p className="mt-1.5 text-[13px] text-muted">
             {mode === 'signup' ? 'Build software by talking to a team of agents.' : 'Welcome back. Pick up where you left off.'}
           </p>

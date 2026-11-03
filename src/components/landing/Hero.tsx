@@ -36,7 +36,7 @@ export const Hero: React.FC = () => {
         </div>
         <p className="mt-5 font-mono text-[10px] tracking-wide text-faint">{COPY.hero.meta}</p>
       </div>
-      <MockShell url="architect.app/p/streak-tracker" glass className="mx-auto mt-12 max-w-5xl">
+      <MockShell url="shipbuds.app/p/streak-tracker" glass className="mx-auto mt-12 max-w-5xl">
         <HeroWorkspaceMock showProgress={show} filled={filled} />
       </MockShell>
     </section>

@@ -1,6 +1,6 @@
-# Architect 2.0 — Architecture
+# Shipbuds — Architecture
 
-Architect 2.0 is a **single-page frontend application**. This document describes the code that
+Shipbuds is a **single-page frontend application**. This document describes the code that
 exists in this repository and runs in the browser. There is no backend, API server, database,
 OAuth provider, model provider, agent runtime or sandbox infrastructure anywhere in the project.
 Capabilities that are simulated are labelled **[simulated]** or **[mocked]**, and every label below
@@ -28,7 +28,7 @@ maps to a file, route or store key named somewhere in this document.
 
 ## 1. Product Architecture
 
-Architect 2.0 is one application with one visual language and a single shell:
+Shipbuds is one application with one visual language and a single shell:
 
 - **One design system.** Every colour, radius, type step and motion value lives in
   `tailwind.config.js` and is mirrored by the CSS variables in `src/index.css`. Auth, onboarding,
@@ -55,7 +55,7 @@ Browser (single origin, no network calls at runtime)
             ├── components/onboarding/     /onboarding            [mocked integrations]
             ├── components/shell/AppShell.tsx
             │   ├── shell/ManagerRail.tsx       column 0 — Managers
-            │   ├── shell/TopBar.tsx            identity + tool routes
+            │   ├── shell/TopBar.tsx            identity + Team strip + tool routes
             │   ├── shell/Sidebar.tsx           ProjectDrawer — overlay sheet
             │   ├── chat/ChatView.tsx           the conversation surface
             │   └── preview/PreviewPane.tsx     Preview + Vibing + Music
@@ -119,6 +119,15 @@ Canvas full-bleed. The panel stacks, top to bottom:
    Music mode (§9)
 
 ### Canvas, Code, GitHub, Deploy
+
+The TopBar also holds the **Team strip** (`shell/TeamStrip.tsx`, hidden below the `sm`
+breakpoint): one avatar per specialist in `Project.team`, with a ring showing the status derived from
+that specialist's build tasks — `needs you` (purple, plus a dot), `working` (blue, pulsing unless
+reduced motion), `failed` (red), `done` or `idle`. The status is also in each button's `aria-label`
+and tooltip, so colour is never the only signal. Clicking opens that specialist's channel. With
+**Show technical detail** on (account menu, stored as `User.persona = 'technical'`), the tooltip adds
+the current task, and an expanded Build card lists every task with owner, status and reason, or what
+it is waiting on.
 
 The TopBar exposes four tool buttons — **UI Head** (Canvas), **Code**, **GitHub**, **Deploy** — each
 carrying `aria-current` and a persistent fill while active. They navigate to child routes of the
@@ -204,13 +213,23 @@ Isolation is by key, not by a backend query:
 
 ### Build and preview state
 
-`startBuild(projectId)` writes a `Build` in `building` state with the seven-task `TASK_SEQUENCE`
-and empty per-agent progress, and a `PreviewState` in `building` at `revealed: 0`, then narrates
-into the Manager thread while `tickBuild()` advances tasks. The number of tasks executed depends on
-the chosen strategy (`lean` 3, `balanced` 5, `enterprise` 7), and each completed task raises
-`revealed`, which is what reveals sections in the generated preview (§8). On completion the project
-becomes `live`, and `runGuard()` is called automatically. `retryBuild()` is the recovery path from
-`error`, restoring `live` and re-running Guard.
+`startBuild(projectId)` returns early if a build is already `building`. Otherwise it writes a
+`Build` whose tasks come from `TASK_SEQUENCE` filtered by `STRATEGY_TASKS` (`lean` 3 tasks,
+`balanced` 5 including the QA review, `enterprise` all 7), plus a `PreviewState` in `building` at
+`revealed: 0`. Each `BuildTask` carries an owner (`channel`), `dependsOn` (ids of tasks that must
+finish first, filtered to the chosen set) and `why` (one sentence).
+
+The module-level `runBuild(projectId, i)` then runs one task per 1.3 s timer: earlier tasks become
+`done`, task `i` becomes `running`, the Manager introduces its specialist and narrates into the
+Manager thread, and `revealed` rises, which reveals sections in the generated preview (§8). When the
+running task is `review`, `runBuild` stops instead of scheduling the next step: the task becomes
+`needs_review`, `Build.awaiting` is set, and the Manager thread gets a **decision card** from QA
+(`decisionFor()` in `scripts.ts`). `answerDecision()` records the choice, clears `awaiting` and calls
+`runBuild` from the next task. Lean has no review task, so it never pauses. On completion every task
+becomes `done`, the project becomes `live`, and `runGuard()` is called automatically.
+
+`retryBuild()` and the Preview's `error` state exist, but no code path currently sets `error`, so
+they are unreachable. Timers are not persisted: reloading mid-build leaves the build in `building`.
 
 ### Local-only state
 
@@ -304,8 +323,16 @@ still gets the complete product loop from the conversation plus the preview pane
 Manager replies come from `src/store/scripts.ts`: `MANAGER_REPLIES` matches keywords in the user's
 message (design/UI → frontend, data/auth/database → backend, AI/suggest → ai-ml, deploy/CI →
 devops, test/bug → qa, change/fix → frontend) and answers with a scripted line, optionally routing
-to a channel. `planFor(intent)` builds the plan card's feature list and team, and `pickTemplate()`
-maps the intent to one of four preview templates. **This is string matching, not language
+to a channel. `pickTemplate()` maps the intent to one of four preview templates.
+
+The first message of a project does not produce a plan directly. `managerSend()` moves `planState`
+from `briefing` to `clarifying` and posts a **clarify card**: up to three questions from
+`clarifyFor(intent)`, each with a default already selected. `answerClarify(projectId, answers)`
+(answers, or `null` for "Let the Manager decide") resolves the card, stores any features the answers
+add in `Project.clarified`, and calls `presentPlan()`. Typing in the composer while the card is open
+counts as extra context: the defaults are kept and the plan follows. `presentPlan()` uses
+`planFor(intent)` for the plan card's feature list and team, appends `Project.clarified`, and posts
+the plan and approach cards; `requestRevision()` keeps `Project.clarified` on every revision. **This is string matching, not language
 understanding — no model is called anywhere.**
 
 ### Dynamically represented specialists
@@ -357,7 +384,7 @@ structure, and `chat/Cards.tsx` for inline functional cards.
 | `id`, `threadId` | identity and owning thread |
 | `authorId` | `user`, `manager`, or a specialist id |
 | `text` | body; may be empty when a card carries the content |
-| `kind` | `text` · `delegation` · `plan` · `strategy` · `build` · `system` |
+| `kind` | `text` · `delegation` · `plan` · `strategy` · `build` · `clarify` · `decision` · `system` |
 | `routedTo[]` | channels the Manager delegated to (rendered as link chips) |
 | `addressedToUser` | false marks agent-to-agent chatter, rendered as activity |
 
@@ -954,8 +981,10 @@ transitions described above.
 | Sign-in | Email/password, the Google account chooser and guest are all local: `signIn()` writes a `User` and nothing is verified |
 | Onboarding integrations | GitHub, Vercel, Supabase and Figma are a catalogue of options in `store/integrations.ts`; connecting records a choice |
 | Manager and specialist replies | Keyword matching over scripted pools in `store/scripts.ts`; no language model is involved |
+| Clarify card | `clarifyFor()` picks one of two fixed question sets (marketplace/booking or generic) by keyword |
 | Plan and strategy cards | `planFor()` derives features and team from words in the brief; the strategy list is a constant |
-| Build engine | Seven canned tasks with timers; per-agent progress is a number in the store |
+| QA decision card | `decisionFor()` returns one fixed question per build; nothing was actually tested |
+| Build engine | Up to seven canned tasks with timers; dependencies and reasons are fixed data, not computed; per-agent progress is a number in the store |
 | Preview | Four canned HTML templates composed at render time, revealed by a numeric threshold |
 | Canvas analysis | Four timed steps and a canned element layout; the uploaded image is never read |
 | Code | Five sample source files keyed by template id, with "streaks" as the only populated key and the fallback for everything else |

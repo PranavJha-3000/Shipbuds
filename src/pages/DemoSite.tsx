@@ -25,7 +25,7 @@ export const DemoSite: React.FC = () => {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-ink">
         <p className="text-sm text-muted">This deployment no longer exists.</p>
-        <Button onClick={() => navigate('/home')}>Back to Architect</Button>
+        <Button onClick={() => navigate('/home')}>Back to Shipbuds</Button>
       </div>
     )
   }
@@ -37,11 +37,11 @@ export const DemoSite: React.FC = () => {
           onClick={() => navigate(`/p/${projectId}/deploy`)}
           className="inline-flex items-center gap-2 rounded-full border border-line px-3 py-1.5 text-[12px] text-muted transition-colors hover:bg-surface hover:text-paper"
         >
-          <ArrowLeft size={13} /> Back to Architect
+          <ArrowLeft size={13} /> Back to Shipbuds
         </button>
         <div className="ml-auto flex items-center gap-3">
           <span className="hidden font-mono text-[11px] text-muted sm:block">
-            {latest?.url ?? `${project.previewTemplateId}.architect.app`}
+            {latest?.url ?? `${project.previewTemplateId}.shipbuds.app`}
           </span>
           <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-[11px] text-paper">
             <span className="h-1.5 w-1.5 rounded-full bg-accent" /> Live

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { cx } from './cx'
+import { Check } from 'lucide-react'
 
 /**
  * POPOVER — one menu for the whole product.
@@ -142,10 +143,13 @@ export const MenuItem: React.FC<{
   icon?: React.ReactNode
   label: string
   onClick?: () => void
-}> = ({ icon, label, onClick }) => (
+  /** Set to make this a toggle (menuitemcheckbox). */
+  checked?: boolean
+}> = ({ icon, label, onClick, checked }) => (
   <button
     type="button"
-    role="menuitem"
+    role={checked === undefined ? 'menuitem' : 'menuitemcheckbox'}
+    aria-checked={checked}
     onClick={onClick}
     className={cx(
       'flex w-full items-center gap-2.5 rounded-sm px-2 py-2 text-left text-label',
@@ -155,5 +159,6 @@ export const MenuItem: React.FC<{
   >
     {icon && <span className="shrink-0 text-muted">{icon}</span>}
     <span className="truncate">{label}</span>
+    {checked && <Check size={13} className="ml-auto shrink-0 text-accent" aria-hidden />}
   </button>
 )

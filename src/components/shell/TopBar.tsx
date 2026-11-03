@@ -5,6 +5,7 @@ import { agentById } from '../../store/roster'
 import type { ChannelId } from '../../store/types'
 import { Identity } from '../ui/Identity'
 import { AccountMenu } from './AccountMenu'
+import { TeamStrip } from './TeamStrip'
 import { Popover, MenuItem } from '../ui/Popover'
 import { StatusDot } from '../ui/StatusDot'
 import { UiDemoVideoDialog } from '../canvas/UiDemoVideoDialog'
@@ -133,6 +134,11 @@ export const TopBar: React.FC<{ title?: string; subtitle?: string; onBack?: () =
       </div>
 
       <div className="ml-auto flex shrink-0 items-center gap-0.5">
+        {hasProject && (
+          <div className="mr-2">
+            <TeamStrip />
+          </div>
+        )}
         {hasProject &&
           TOOLS.map((t) => {
             const active = activeTool === t.to

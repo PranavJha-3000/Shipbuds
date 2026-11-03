@@ -58,7 +58,7 @@ export const VibingChooser: React.FC<{ projectId: string }> = ({ projectId }) =>
     // that window with the exact video.
     const feed = openBrainrot(source)
     if (feed === 'blocked') {
-      say('Your browser blocked that window. Allow pop-ups for Architect, then pick again. You can also paste a link.')
+      say('Your browser blocked that window. Allow pop-ups for Shipbuds, then pick again. You can also paste a link.')
       return
     }
     say('Opening your feed — paste a link for a specific video, or vibe while work runs.')
@@ -77,7 +77,7 @@ export const VibingChooser: React.FC<{ projectId: string }> = ({ projectId }) =>
     }
     if (result === 'blocked') {
       // A popup blocker returns no window. Say so rather than claim an opening.
-      say('Your browser blocked that tab. Allow pop-ups for Architect, then try again.')
+      say('Your browser blocked that tab. Allow pop-ups for Shipbuds, then try again.')
       return
     }
     setUrl('')

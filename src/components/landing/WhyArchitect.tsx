@@ -23,7 +23,7 @@ export const WhyArchitect: React.FC = () => (
         </p>
       </Reveal>
       <Reveal delay={80}>
-        <MockShell url="architect.app/p/streak-tracker — Manager">
+        <MockShell url="shipbuds.app/p/streak-tracker — Manager">
           <div className="space-y-2.5 p-4">
             <ChatBubble from="manager" name="Manager">
               Streak API needs a home. Backend, take the storage and the weekly rollup.

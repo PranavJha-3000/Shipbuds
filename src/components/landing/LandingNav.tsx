@@ -8,7 +8,7 @@ export const LandingNav: React.FC = () => (
     <div className="mx-auto flex h-14 max-w-6xl items-center gap-6 px-6 md:px-8">
       <a href="#top" className="flex items-center gap-2.5">
         <img src={ASSETS.logos.white} alt="Lyzr AI" className="h-6 w-6 rounded-[6px]" />
-        <span className="text-label font-semibold tracking-tight text-paper">Architect 2.0</span>
+        <span className="text-label font-semibold tracking-tight text-paper">Shipbuds</span>
       </a>
       <Link
         to="/signup"

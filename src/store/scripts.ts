@@ -1,4 +1,4 @@
-import type { ChannelId, Strategy } from './types'
+import type { ChannelId, ClarifyQuestion, Strategy } from './types'
 
 /** Strategies offered inline in the chat (no standalone page). */
 export const STRATEGY_OPTIONS: Strategy[] = ['lean', 'balanced', 'enterprise']
@@ -22,7 +22,9 @@ export const planFor = (intent: string) => {
   const features: string[] = []
   const team: ChannelId[] = []
 
-  if (/\b(habit|streak|routine|tracker|exercise|water)\b/.test(t)) {
+  if (isMarketplace(t)) {
+    features.push('Provider profiles', 'Browse and search providers', 'Booking from available slots', 'Booking confirmations for both sides')
+  } else if (/\b(habit|streak|routine|tracker|exercise|water)\b/.test(t)) {
     features.push('Daily habit logging', 'Streak tracking with recovery rules', 'Weekly heatmap', 'Empty states that teach the user')
   } else if (/\b(portal|crm|client|invoice|invoice|agency|contract)\b/.test(t)) {
     features.push('Client list with search', 'Invoice and payment status', 'File sharing per client', 'Message thread per account')
@@ -55,6 +57,50 @@ export const planFor = (intent: string) => {
   }
 }
 
+const isMarketplace = (t: string) =>
+  /\b(marketplace|book|booking|bookings|appointment|tutor|tutors|class|classes|lesson|session|provider|providers|freelancer)\b/.test(t)
+
+/**
+ * Clarifying questions asked before the plan. At most three, each with a
+ * sensible default pre-selected so "Use your judgement" is always safe.
+ */
+export const clarifyFor = (intent: string): ClarifyQuestion[] => {
+  const t = intent.toLowerCase()
+  if (isMarketplace(t)) {
+    return [
+      { id: 'pay', q: 'Do bookings cost money?', selected: 0, options: [
+        { label: 'Free to book' }, { label: 'Paid at booking', adds: 'Payments at booking' },
+      ] },
+      { id: 'approve', q: 'Should new providers be approved first?', selected: 1, options: [
+        { label: 'Anyone can list' }, { label: 'I approve them', adds: 'Approval queue for new providers' },
+      ] },
+      { id: 'slots', q: 'How do providers set availability?', selected: 0, options: [
+        { label: 'Weekly calendar' }, { label: 'Fixed time slots' },
+      ] },
+    ]
+  }
+  return [
+    { id: 'who', q: 'Who is this for?', selected: 0, options: [
+      { label: 'Just me' }, { label: 'My customers' }, { label: 'My team', adds: 'Shared workspace for a team' },
+    ] },
+    { id: 'signin', q: 'How should people sign in?', selected: 0, options: [
+      { label: 'Email' }, { label: 'Google' }, { label: 'No sign-in' },
+    ] },
+  ]
+}
+
+/** The one decision QA escalates to the user during a reviewed build. */
+export const decisionFor = (intent: string) =>
+  isMarketplace(intent.toLowerCase())
+    ? {
+        question: 'Two students can book the same slot if they click at the same moment. What should happen?',
+        options: ['Hold the slot for the first person and tell the second', 'Allow both and let the provider sort it out'],
+      }
+    : {
+        question: 'If two people edit the same item at once, one change is lost. What should happen?',
+        options: ['Keep both and ask which to use', 'Keep the latest change'],
+      }
+
 /** Title from the user's own words — used as the project name. */
 export const titleFor = (intent: string) => {
   const cleaned = intent
@@ -65,6 +111,9 @@ export const titleFor = (intent: string) => {
   if (!short) return 'New project'
   return short.charAt(0).toUpperCase() + short.slice(1)
 }
+
+/** Manager's line before the clarify card. */
+export const MANAGER_CLARIFY_INTRO = 'A few quick questions first. I picked defaults, so change anything or let me decide.'
 
 /** Manager's line before the plan card. */
 export const MANAGER_PLAN_INTRO = "Here's how I'd approach it."

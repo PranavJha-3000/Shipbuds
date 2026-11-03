@@ -12,7 +12,7 @@ export const CanvasSection: React.FC = () => (
         <SectionHead eyebrow={COPY.canvas.eyebrow} title={COPY.canvas.title} body={COPY.canvas.body} />
       </Reveal>
       <Reveal>
-        <MockShell url="architect.app/p/portal — UI Head" className="mt-10">
+        <MockShell url="shipbuds.app/p/portal — UI Head" className="mt-10">
           <div className="grid md:grid-cols-2">
             <div className="border-b border-line p-4 md:border-b-0 md:border-r">
               <p className="text-[11px] text-faint">Imported screenshot</p>
@@ -70,12 +70,12 @@ export const ShipSection: React.FC = () => (
         </div>
       </Reveal>
       <Reveal delay={60}>
-        <MockShell url="architect.app/p/portal — github + deploy" className="mt-8">
+        <MockShell url="shipbuds.app/p/portal — github + deploy" className="mt-8">
           <div>
             <CommitRow hash="c41ad0" message="Portal v3 — client messages" meta="Manager · via GitHub · simulated" status="success" />
             <div className="flex items-center gap-2 border-t border-line px-3 py-2.5">
               <img src={ASSETS.icons.github} alt="" aria-hidden className="brand-icon h-3.5 w-3.5" />
-              <span className="font-mono text-[10px] text-faint">main · deploy log ✓ Live at portal-v3.architect.app</span>
+              <span className="font-mono text-[10px] text-faint">main · deploy log ✓ Live at portal-v3.shipbuds.app</span>
             </div>
           </div>
         </MockShell>

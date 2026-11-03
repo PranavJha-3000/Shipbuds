@@ -13,7 +13,7 @@ export const BuildExperience: React.FC = () => (
         <SectionHead eyebrow={COPY.build.eyebrow} title={COPY.build.title} body={COPY.build.body} />
       </Reveal>
       <Reveal>
-        <MockShell url="architect.app/p/meals — building" className="mt-10">
+        <MockShell url="shipbuds.app/p/meals — building" className="mt-10">
           <div className="grid md:grid-cols-2">
             <div className="min-w-0 space-y-2.5 border-b border-line p-4 md:border-b-0 md:border-r">
               <ChatBubble from="user" name="You">Recipe planner from my grocery list.</ChatBubble>

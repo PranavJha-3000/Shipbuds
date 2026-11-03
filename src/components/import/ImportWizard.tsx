@@ -10,7 +10,7 @@ import { cx } from '../ui/cx'
 import { Check, Loader2, FileArchive, ClipboardPaste, Search, Sparkles } from 'lucide-react'
 import { ASSETS } from '../../assets'
 
-const ANALYSIS_STEPS = ['Cloning repository…', 'Indexing files…', 'Reading config…', 'Detecting framework…', 'Matching specialists…']
+const ANALYSIS_STEPS = ['Preparing sample analysis…', 'Sample file index…', 'Sample config read…', 'Picking a sample stack…', 'Matching specialists…']
 
 const SOURCES: { type: ImportDraft['sourceType']; label: string; icon: React.ReactNode; placeholder: string }[] = [
   { type: 'github', label: 'GitHub URL', icon: <img src={ASSETS.icons.github} alt="" aria-hidden className="brand-icon h-[14px] w-[14px]" />, placeholder: 'https://github.com/you/your-project' },
@@ -24,14 +24,14 @@ const DETECTED = {
     stack: ['React 18', 'TypeScript', 'Tailwind', 'Vite'],
     agents: ['frontend', 'backend', 'qa'] as ChannelId[],
     files: 42,
-    summary: "I've reviewed your repo — 42 files, React 18 with Vite and Tailwind, routing already set up. Three specialists are ready to work. What would you like to add?",
+    summary: "Demo analysis — your repository was not fetched. In the real product I'd read it first; here's a sample: 42 files, React 18 with Vite and Tailwind, routing already set up. Three specialists are ready to work. What would you like to add?",
   },
   next: {
     framework: 'Next.js 14 + Prisma',
     stack: ['Next.js 14', 'App Router', 'Prisma', 'PostgreSQL'],
     agents: ['frontend', 'backend', 'devops', 'qa'] as ChannelId[],
     files: 118,
-    summary: "I've reviewed your repo — 118 files, Next.js 14 on the App Router with Prisma and a Postgres schema. Four specialists are ready, including DevOps for the data layer. What should we tackle first?",
+    summary: "Demo analysis — your repository was not fetched. In the real product I'd read it first; here's a sample: 118 files, Next.js 14 on the App Router with Prisma and a Postgres schema. Four specialists are ready, including DevOps for the data layer. What should we tackle first?",
   },
 }
 
@@ -80,7 +80,7 @@ export const ImportWizard: React.FC<{ open: boolean; onClose: () => void }> = ({
   }
 
   return (
-    <Modal open={open} onClose={onClose} title="Import an existing project" description="Bring in a codebase and Architect will get the team oriented." width="max-w-lg">
+    <Modal open={open} onClose={onClose} title="Import an existing project" description="Bring in a codebase and Shipbuds will get the team oriented." width="max-w-lg">
       {step === 0 && (
         <div className="space-y-4">
           <div className="grid grid-cols-3 gap-2">
@@ -99,7 +99,7 @@ export const ImportWizard: React.FC<{ open: boolean; onClose: () => void }> = ({
             ))}
           </div>
           <Input value={source} onChange={(e) => setSource(e.target.value)} placeholder={SOURCES.find((s) => s.type === type)!.placeholder} />
-          <p className="text-[11px] text-muted">Try a URL containing “next” or “prisma” to see a different detected stack.</p>
+          <p className="text-[11px] text-muted">Demo: nothing is fetched or uploaded. Results are a sample — include “next” or “prisma” to see the other one. No files will be changed.</p>
           <Button className="w-full" onClick={runAnalysis} disabled={!source.trim()}>
             <Search size={14} /> Analyse repository
           </Button>
@@ -126,14 +126,14 @@ export const ImportWizard: React.FC<{ open: boolean; onClose: () => void }> = ({
       {step === 2 && result && (
         <div className="space-y-4">
           <div className="rounded-card border border-line bg-surface p-3">
-            <p className="text-[11px] uppercase tracking-wider text-muted">Detected framework</p>
+            <p className="text-[11px] uppercase tracking-wider text-muted">Sample detected framework</p>
             <p className="mt-1 text-[14px] font-medium text-paper">{result.framework}</p>
             <div className="mt-2.5 flex flex-wrap gap-1.5">
               {result.stack.map((s) => (
                 <span key={s} className="rounded-full border border-line bg-ink px-2 py-0.5 text-[10px] text-muted">{s}</span>
               ))}
             </div>
-            <p className="mt-2.5 text-[11px] text-muted">{result.files} files indexed</p>
+            <p className="mt-2.5 text-[11px] text-muted">{result.files} files (sample — not your repository)</p>
           </div>
 
           <div>

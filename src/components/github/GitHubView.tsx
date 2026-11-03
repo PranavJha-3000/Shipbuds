@@ -142,7 +142,7 @@ export const GitHubView: React.FC = () => {
         open={resolveOpen}
         onClose={() => setResolveOpen(false)}
         title="Resolve conflict"
-        description="Pick one version. Architect will create a new commit so history stays readable."
+        description="Pick one version. Shipbuds will create a new commit so history stays readable."
         footer={<Button variant="ghost" onClick={() => setResolveOpen(false)}>Cancel</Button>}
       >
         <div className="space-y-2">
