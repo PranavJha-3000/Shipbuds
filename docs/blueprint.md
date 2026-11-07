@@ -303,3 +303,7 @@ Multi-user projects, roles, agent evals, team observability, usage/cost manageme
 Behaviour change: Lean runs 3 tasks, Balanced 5 (incl. QA review), Enterprise 7. Previously Balanced always included AI / ML. The last task now ends `done` (it used to stay `running`).
 
 Known gaps: Preview template for marketplace ideas still falls back to the habit-tracker template; a reload mid-build stops the build (timers aren't persisted — pre-existing).
+
+### Interface redesign, phases 1 to 5, 2026-11-07
+
+Tone-separated surfaces and removal of legacy tokens; sidebar closed by default below 1024px; header tools grouped, with GitHub and Deploy merged into one Ship tool (`/ship`, `/ship/deploy`; old URLs redirect); resolved Clarify and Decision cards collapse to one line and only the newest Build card shows; Preview becomes a bottom sheet below 900px; new messages rise in. Commits `bb658cd` to `5684332`. Left for later: account menu still in the header, build narration lines are still separate bubbles, Plan and Approach are still two cards, no shared spec for dialogs and empty states. Product docs: [`product/README.md`](./product/README.md).

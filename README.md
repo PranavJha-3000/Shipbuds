@@ -4,6 +4,8 @@ A vibe-coding platform that feels like talking to an AI engineering team rather 
 
 Manager is the primary interface. Work is routed to specialist team channels (`#frontend`, `#backend`, `#ai-ml`, `#devops`, `#qa`), a persistent Preview pane builds section by section, and UI Head Canvas handles visual design. Technical users can drop into Code, GitHub and Deploy at any point; non-technical users can stay in Manager + Preview the whole time.
 
+Product thinking (strategy, PRD, discovery plan, metrics, AI evaluation, roadmap, decision log) is in [`docs/product/`](docs/product/README.md).
+
 ## Running locally
 
 ```bash
@@ -44,8 +46,8 @@ One dark, message-first palette is the single colour system for the whole produc
 | Token | Value | Use |
 | --- | --- | --- |
 | `ink` | `#121214` | App background, chat canvas |
-| `sidebar` | `#121214` | Manager rail, project drawer, panels, incoming messages |
-| `surface` | `#18181B` | Cards, popovers, secondary controls |
+| `sidebar` | `#18181B` | Sidebar and drawer |
+| `surface` | `#1E1E22` | Cards, popovers, composer, hover fills |
 | `bubble` | `#26262A` | Your own messages, hover states |
 | `input` | `#1E1E22` | Composer and input bars |
 | `action` | `#323238` | Control fill, inactive track, scrollbar thumb |

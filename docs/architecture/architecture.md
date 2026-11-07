@@ -24,7 +24,7 @@ maps to a file, route or store key named somewhere in this document.
 | QR code | `qrcode.react` (used by `DeployView`) |
 | Build | `npm run build` → `tsc -b && vite build` |
 | Dev server | `npm run dev` → Vite on port `5173` (`vite.config.ts`) |
-| Tests | none — there is no test runner, test script or test file in this repository |
+| Tests | Vitest 2 (`npm test`): six store-level tests in `src/store/store.test.ts`; no component or end-to-end tests |
 
 ## 1. Product Architecture
 
