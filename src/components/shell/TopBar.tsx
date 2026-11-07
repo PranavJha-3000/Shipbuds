@@ -139,8 +139,9 @@ export const TopBar: React.FC<{ title?: string; subtitle?: string; onBack?: () =
             <TeamStrip />
           </div>
         )}
-        {hasProject &&
-          TOOLS.map((t) => {
+        {hasProject && (
+          <div role="group" aria-label="Tools" className="flex items-center gap-0.5 rounded-full bg-surface p-0.5">
+        {TOOLS.map((t) => {
             const active = activeTool === t.to
             return (
               <button
@@ -153,14 +154,16 @@ export const TopBar: React.FC<{ title?: string; subtitle?: string; onBack?: () =
                 className={
                   'coarse-hit flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-instant ease-standard ' +
                   (active
-                    ? 'bg-surface text-paper'
-                    : 'text-muted hover:bg-surface hover:text-paper')
+                    ? 'bg-action text-paper'
+                    : 'text-muted hover:text-paper')
                 }
               >
                 {t.icon}
               </button>
             )
           })}
+          </div>
+        )}
 
         {/* Overflow: secondary conversation actions, weighted identically to the
             tools so nothing in this bar competes for attention. */}

@@ -38,7 +38,9 @@ export const MessageBubble: React.FC<{
   startsGroup: boolean
   /** Adds the larger gap that separates one author group from the next. */
   lastInGroup: boolean
-}> = ({ message, startsGroup, lastInGroup }) => {
+  /** An older build card: the newest one carries the progress, so this one is hidden. */
+  hideCard?: boolean
+}> = ({ message, startsGroup, lastInGroup, hideCard }) => {
   const { projectId = '' } = useParams()
   const navigate = useNavigate()
   const isUser = message.authorId === 'user'
@@ -113,7 +115,7 @@ export const MessageBubble: React.FC<{
         {/* Cards are functional objects attached to a message, not a second
             message: a different plane (#18181b) with a #2c2c32 border and a
             tighter radius than the bubble above, so the two can never be mistaken for each other. */}
-        {message.card && (
+        {message.card && !hideCard && (
           <div className={cx(GROUP_WIDTH, message.text ? 'mt-2' : 'mt-1')}>
             {message.card.type === 'plan' && <PlanCard card={message.card} />}
             {message.card.type === 'strategy' && <StrategyCard card={message.card} />}

@@ -27,6 +27,14 @@ const Shell: React.FC<{ children: React.ReactNode; className?: string }> = ({ ch
   <div className={cx('overflow-hidden rounded-xl border border-line bg-surface', className)}>{children}</div>
 )
 
+/** A resolved card shrinks to one quiet line so the thread stops stacking boxes. */
+const Resolved: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <p className="flex items-center gap-2 text-meta text-muted">
+    <Check size={12} className="shrink-0" aria-hidden />
+    <span className="min-w-0">{children}</span>
+  </p>
+)
+
 const CardLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <span className="text-micro font-semibold uppercase tracking-[0.06em] text-muted">{children}</span>
 )
@@ -107,13 +115,6 @@ export const PlanCard: React.FC<{ card: PlanCardData }> = ({ card }) => {
         <div className="flex items-center gap-2 border-t border-line px-4 py-2.5">
           <Button size="sm" variant="secondary" onClick={() => setEditing(true)} className="coarse-hit">
             <Pencil size={12} /> Adjust
-          </Button>
-          <Button
-            size="sm"
-            className="coarse-hit ml-auto"
-            onClick={() => useStore.getState().managerSend(projectId, 'start building')}
-          >
-            <Hammer size={12} /> Start building
           </Button>
         </div>
       )}
@@ -267,6 +268,11 @@ export const ClarifyCard: React.FC<{ card: ClarifyCardData }> = ({ card }) => {
   const done = !!card.resolved
   const shown = done ? card.questions.map((q) => q.selected) : picks
 
+  if (done) {
+    const chosen = card.questions.map((q, i) => q.options[shown[i]].label).join(' · ')
+    return <Resolved>{card.resolved === 'skipped' ? 'Manager used its defaults' : chosen}</Resolved>
+  }
+
   return (
     <Shell>
       <div className="px-4 pt-3">
@@ -327,6 +333,14 @@ export const DecisionCard: React.FC<{ card: DecisionCardData }> = ({ card }) => 
   const { projectId = '' } = useParams()
   const answerDecision = useStore((s) => s.answerDecision)
   const done = card.selected !== undefined
+
+  if (done) {
+    return (
+      <Resolved>
+        {agentById(card.from).name}: {card.question} <span className="text-paper">{card.options[card.selected!]}</span>
+      </Resolved>
+    )
+  }
 
   return (
     <Shell className={cx(!done && 'border-accentPurple/40')}>

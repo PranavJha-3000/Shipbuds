@@ -44,6 +44,7 @@ export const ChatView: React.FC<{ mode: 'manager' | 'channel' | 'dm'; channelId?
     [thread?.messages],
   )
   const rows = useMemo(() => buildChatRows(messages), [messages])
+  const lastBuildId = useMemo(() => [...messages].reverse().find((m) => m.card?.type === 'build')?.id, [messages])
 
   useEffect(() => {
     if (thread) readThread(thread.id)
@@ -86,7 +87,10 @@ export const ChatView: React.FC<{ mode: 'manager' | 'channel' | 'dm'; channelId?
     const el = composerRef.current
     if (!el) return
     el.style.height = 'auto'
-    el.style.height = `${Math.min(el.scrollHeight, 22 * MAX_COMPOSER_LINES)}px`
+    const max = 22 * MAX_COMPOSER_LINES
+    el.style.height = `${Math.min(el.scrollHeight, max)}px`
+    // Scrollbar only once the text outgrows the box; otherwise it draws stray arrows.
+    el.style.overflowY = el.scrollHeight > max ? 'auto' : 'hidden'
   }, [text])
 
   const submit = (value?: string) => {
@@ -147,6 +151,7 @@ export const ChatView: React.FC<{ mode: 'manager' | 'channel' | 'dm'; channelId?
                 message={row.message}
                 startsGroup={row.startsGroup}
                 lastInGroup={isLastInTurn(rows, i)}
+                hideCard={row.message.card?.type === 'build' && row.message.id !== lastBuildId}
               />
             ),
           )}
@@ -209,7 +214,7 @@ export const ChatView: React.FC<{ mode: 'manager' | 'channel' | 'dm'; channelId?
 
       <div className="shrink-0 border-t border-line bg-ink px-5 pb-5 pt-2">
         <div className="mx-auto max-w-[720px]">
-          <div className="flex items-end gap-2 rounded-2xl border border-line bg-input p-2 transition-colors duration-instant ease-standard focus-within:border-accent/60">
+          <div className="flex items-end gap-2 rounded-md border border-line bg-input p-2 transition-colors duration-instant ease-standard focus-within:border-accent/60">
             <textarea
               ref={composerRef}
               data-chat-composer
@@ -224,7 +229,7 @@ export const ChatView: React.FC<{ mode: 'manager' | 'channel' | 'dm'; channelId?
               rows={1}
               placeholder={placeholder}
               aria-label={placeholder}
-              className="max-h-[110px] min-h-[24px] flex-1 resize-none bg-transparent py-1 text-body leading-relaxed text-paper placeholder:text-faint focus:outline-none"
+              className="max-h-[110px] min-h-[24px] flex-1 scrollbar-thin resize-none bg-transparent py-1 text-body leading-relaxed text-paper placeholder:text-faint focus:outline-none"
             />
             <button
               type="button"

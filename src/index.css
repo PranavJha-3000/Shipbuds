@@ -16,8 +16,8 @@
 :root {
   /* Planes — iMessage-inspired dark mode. */
   --bg-app: #121214;
-  --bg-sidebar: #121214;
-  --bg-card: #18181b;
+  --bg-sidebar: #18181b;
+  --bg-card: #1e1e22;
   --bg-bubble-user: #26262a;
   --bg-input: #1e1e22;
   --border-subtle: #2c2c32;

@@ -21,8 +21,8 @@ export default {
       colors: {
         /* Planes — app frame to raised object. iMessage-inspired dark mode. */
         ink: '#121214',      // plane 0 — app background, chat canvas (--bg-app)
-        sidebar: '#121214',  // plane 1 — rail, drawer, panel, incoming message (--bg-sidebar)
-        surface: '#18181b',  // plane 2 — cards, composer, inputs, popovers (--bg-card)
+        sidebar: '#18181b',  // plane 1 — sidebar rail, drawer (--bg-sidebar)
+        surface: '#1e1e22',  // plane 2 — raised: cards, composer, inputs, popovers, hover fills (--bg-card)
         bubble: '#26262a',   // plane 2 alt — outgoing user message bubble (--bg-bubble-user)
         input: '#1e1e22',    // composer / input bar background (--bg-input)
 
@@ -30,9 +30,6 @@ export default {
         action: '#323238',   // control fill, inactive track, scrollbar thumb
         paper: '#e4e4e7',    // primary text (--text-primary)
         white: '#ffffff',    // inverted CTA text on accent fills
-        /** @deprecated Press tone for the primary button. Superseded by
-         *  accent hover; kept so existing classnames do not break. */
-        cream: '#F2F2F4',
 
         /* Accents — iMessage blue for primary actions, purple for highlights. */
         accent: '#007aff',   // --accent-blue — send button, primary CTA

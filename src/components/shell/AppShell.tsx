@@ -59,6 +59,13 @@ export const AppShell: React.FC = () => {
   const isCanvas = pathname.endsWith('/canvas')
   const hasProject = pathname.startsWith('/p/')
   const showRightPanel = !isCanvas && hasProject
+  const setSidebarOpen = useStore((s) => s.setSidebarOpen)
+
+  // The persisted `sidebarOpen` is a desktop preference. Below `lg` the sidebar
+  // is a slide-over, so starting open would cover the conversation on load.
+  React.useEffect(() => {
+    if (window.matchMedia('(max-width: 1023px)').matches) setSidebarOpen(false)
+  }, [setSidebarOpen])
 
   return (
     <div className="relative flex h-[100dvh] w-screen overflow-hidden bg-ink">
