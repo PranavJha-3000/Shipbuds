@@ -84,7 +84,7 @@ export const MessageBubble: React.FC<{
       */}
       <div className="w-7 shrink-0">
         {startsGroup &&
-          (isManager ? <Identity size="sm" /> : <SpecialistIdentity name={agent.name} size="sm" />)}
+          (isManager ? <Identity size="sm" /> : <SpecialistIdentity agentId={message.authorId} size="sm" />)}
       </div>
 
       <div className="min-w-0 flex-1">
@@ -180,7 +180,7 @@ export const TypingRow: React.FC<{ authorId: string; startsGroup: boolean }> = (
     <div className="mb-5 flex items-start gap-3">
       <div className="w-7 shrink-0">
         {startsGroup &&
-          (isManager ? <Identity size="sm" /> : <SpecialistIdentity name={name} size="sm" />)}
+          (isManager ? <Identity size="sm" /> : <SpecialistIdentity agentId={authorId} size="sm" />)}
       </div>
       <div className="flex items-center gap-3 pt-1">
         {startsGroup && <span className="text-label font-semibold text-paper">{name}</span>}

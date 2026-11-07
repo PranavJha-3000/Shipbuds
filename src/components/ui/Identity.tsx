@@ -2,7 +2,9 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import { useStore } from '../../store/store'
 import { cx } from './cx'
-import { AVATAR_TEMPLATES, resolveAvatarTemplate, templateGradient } from './avatarTemplates'
+import { AVATAR_TEMPLATES, templateGradient } from './avatarTemplates'
+import { BoopAvatar } from './BoopAvatar'
+import { skinForAgent, skinForTemplate, type BoopAction } from './boopMap'
 import { Shuffle } from 'lucide-react'
 
 /**
@@ -21,25 +23,14 @@ import { Shuffle } from 'lucide-react'
 
 export type IdentitySize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 
-/** One ladder for every avatar in the product. */
-const SIZES: Record<IdentitySize, { box: string; text: string }> = {
-  xs: { box: 'h-6 w-6', text: 'text-[9px]' },
-  sm: { box: 'h-7 w-7', text: 'text-[10px]' },
-  md: { box: 'h-8 w-8', text: 'text-[11px]' },
-  lg: { box: 'h-10 w-10', text: 'text-[12px]' },
-  xl: { box: 'h-12 w-12', text: 'text-[14px]' },
+/** One ladder for every avatar in the product: Tailwind box classes plus the face size in px. */
+const SIZES: Record<IdentitySize, { box: string; px: number }> = {
+  xs: { box: 'h-6 w-6', px: 24 },
+  sm: { box: 'h-7 w-7', px: 28 },
+  md: { box: 'h-8 w-8', px: 32 },
+  lg: { box: 'h-10 w-10', px: 40 },
+  xl: { box: 'h-12 w-12', px: 48 },
 }
-
-/** Agent initials are a different token size, so they get their own ladder. */
-const AGENT_SIZES: Record<IdentitySize, string> = {
-  xs: 'h-6 w-6 text-[9px]',
-  sm: 'h-7 w-7 text-[10px]',
-  md: 'h-8 w-8 text-[11px]',
-  lg: 'h-10 w-10 text-[12px]',
-  xl: 'h-12 w-12 text-[14px]',
-}
-
-const initials = (name: string) => (name.trim()[0] ?? 'M').toUpperCase()
 
 export const Identity: React.FC<{
   /** Resolves the project owner when omitted. */
@@ -48,7 +39,11 @@ export const Identity: React.FC<{
   /** Overrides the derived name — used for aria labels. */
   name?: string
   className?: string
-}> = ({ managerId, size = 'md', name, className }) => {
+  /** Expression to play on the face. */
+  action?: BoopAction
+  /** Pointer-following eyes. Leave off in lists. */
+  live?: boolean
+}> = ({ managerId, size = 'md', className, action, live }) => {
   const { projectId = '' } = useParams()
   const onboarding = useStore((s) => s.onboarding)
   const managers = useStore((s) => s.managers)
@@ -71,68 +66,43 @@ export const Identity: React.FC<{
     owner?.templateId ??
     (!ownerId ? active?.templateId : undefined) ??
     (draft ? onboarding.managerTemplate : undefined)
-  const label =
-    name ||
-    owner?.nickname ||
-    (!ownerId ? active?.nickname : undefined) ||
-    (draft ? onboarding.managerNickname : undefined) ||
-    'The Manager'
+  const { box, px } = SIZES[size]
 
-  const { box, text } = SIZES[size]
-
-  // No uploaded photo → a gradient template, keyed by the same resolution
-  // order as the avatar so a Manager's colour is stable across sessions
+  // An uploaded photo always wins. Otherwise the Manager wears a BoopFace whose skin is
+  // keyed by the same resolution order as the avatar, so it is stable across sessions
   // without any persisted migration.
-  const template = avatar
-    ? null
-    : resolveAvatarTemplate(templateId, ownerId || activeManagerId || 'onboarding')
-
+  if (avatar) {
+    return (
+      <span className={cx('relative flex shrink-0 items-center justify-center overflow-hidden rounded-full', box, className)}>
+        <img src={avatar} alt="" aria-hidden className="h-full w-full object-cover" draggable={false} />
+      </span>
+    )
+  }
   return (
-    <span
-      className={cx(
-        'relative flex shrink-0 items-center justify-center overflow-hidden rounded-full',
-        box,
-        text,
-        className,
-      )}
-      style={template ? { background: templateGradient(template) } : undefined}
-    >
-      {avatar ? (
-        <img
-          src={avatar}
-          alt=""
-          aria-hidden
-          className="h-full w-full object-cover"
-          draggable={false}
-        />
-      ) : (
-        <span className="font-semibold text-white" aria-hidden>
-          {initials(label)}
-        </span>
-      )}
+    <span className={cx('relative flex shrink-0 items-center justify-center rounded-full', box, className)}>
+      <BoopAvatar
+        skin={skinForTemplate(templateId, ownerId || activeManagerId || 'onboarding')}
+        px={px}
+        action={action}
+        live={live}
+      />
     </span>
   )
 }
 
 /**
- * SPECIALIST IDENTITY — the agent counterpart. Agents have no uploaded photo,
- * so this is always initials on the control colour. Keeping it separate from
- * `Identity` means the two can never drift apart in sizing.
+ * SPECIALIST IDENTITY — the agent counterpart. Agents have no uploaded photo, so each
+ * specialist always wears the same BoopFace. Same size ladder as `Identity`.
  */
 export const SpecialistIdentity: React.FC<{
-  name: string
+  agentId: string
   size?: IdentitySize
   className?: string
-}> = ({ name, size = 'sm', className }) => (
-  <span
-    aria-hidden
-    className={cx(
-      'flex shrink-0 items-center justify-center rounded-full bg-action font-semibold text-paper',
-      AGENT_SIZES[size],
-      className,
-    )}
-  >
-    {name.slice(0, 2).toUpperCase()}
+  action?: BoopAction
+  live?: boolean
+}> = ({ agentId, size = 'sm', className, action, live }) => (
+  <span className={cx('relative flex shrink-0 items-center justify-center rounded-full', SIZES[size].box, className)}>
+    <BoopAvatar skin={skinForAgent(agentId)} px={SIZES[size].px} action={action} live={live} />
   </span>
 )
 

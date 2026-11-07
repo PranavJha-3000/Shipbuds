@@ -59,7 +59,7 @@ export const TeamStrip: React.FC = () => {
             className="coarse-hit relative rounded-full transition-transform duration-instant ease-standard active:scale-95"
           >
             <SpecialistIdentity
-              name={name}
+              agentId={ch}
               size="xs"
               className={cx('ring-2 ring-offset-1 ring-offset-ink', RING[status], status === 'working' && 'motion-safe:animate-pulse')}
             />
