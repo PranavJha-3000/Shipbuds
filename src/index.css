@@ -49,24 +49,6 @@
   color-scheme: dark;
 }
 
-/*
- * LEGACY ALIASES — the onboarding components (6 files) still reference the
- * original `--grok-*` names via inline styles. They are mapped here so nothing
- * renders unstyled; the onboarding rewrite removes them in Phase 7.
- * Do not use these names in new code.
- */
-:root {
-  --grok-app-bg: var(--plane-0);
-  --grok-sidebar-bg: var(--plane-1);
-  --grok-search-input: var(--plane-2);
-  --grok-user-bubble: var(--outgoing);
-  --grok-bot-bubble: var(--plane-1);
-  --grok-action-btn: var(--control);
-  --grok-text-main: var(--text-primary);
-  --grok-text-muted: var(--text-secondary);
-  --grok-line: var(--line);
-}
-
 @layer base {
   html,
   body,

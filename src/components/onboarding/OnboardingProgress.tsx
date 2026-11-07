@@ -11,7 +11,7 @@ export const OnboardingProgress: React.FC<{ step: string; className?: string }> 
         <span
           key={s}
           className="h-[3px] w-7 rounded-full transition-colors duration-300"
-          style={{ background: i <= current ? 'var(--grok-text-main)' : 'var(--grok-action-btn)' }}
+          style={{ background: i <= current ? 'var(--text-primary)' : 'var(--control)' }}
         />
       ))}
     </div>

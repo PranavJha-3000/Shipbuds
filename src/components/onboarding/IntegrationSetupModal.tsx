@@ -47,12 +47,12 @@ export const IntegrationSetupModal: React.FC<{
       <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.72)' }} onClick={busy ? undefined : onClose} />
       <div
         className="relative w-full max-w-sm animate-fadeUp rounded-[14px] p-6"
-        style={{ background: 'var(--grok-sidebar-bg)', border: '1px solid var(--grok-line)' }}
+        style={{ background: 'var(--plane-1)', border: '1px solid var(--line)' }}
       >
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-[15px] font-semibold text-white">{current.title}</h2>
-            <p className="mt-1 text-[12px] leading-relaxed" style={{ color: 'var(--grok-text-muted)' }}>
+            <h2 className="text-body font-semibold text-white">{current.title}</h2>
+            <p className="mt-1 text-meta leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               {current.description}
             </p>
           </div>
@@ -61,7 +61,7 @@ export const IntegrationSetupModal: React.FC<{
             onClick={onClose}
             aria-label="Close"
             className="rounded-full p-1 transition-colors hover:bg-white/8"
-            style={{ color: 'var(--grok-text-muted)' }}
+            style={{ color: 'var(--text-secondary)' }}
           >
             <X size={15} />
           </button>
@@ -72,7 +72,7 @@ export const IntegrationSetupModal: React.FC<{
             <span
               key={p.key}
               className="h-[3px] flex-1 rounded-full transition-colors duration-300"
-              style={{ background: i <= phase ? 'var(--grok-text-main)' : 'var(--grok-action-btn)' }}
+              style={{ background: i <= phase ? 'var(--text-primary)' : 'var(--control)' }}
             />
           ))}
         </div>
@@ -88,21 +88,21 @@ export const IntegrationSetupModal: React.FC<{
                 'flex w-full items-center gap-3 rounded-[10px] px-3.5 py-3 text-left transition-colors',
                 busy ? 'pointer-events-none opacity-50' : 'hover:bg-white/[0.06]',
               )}
-              style={{ background: 'var(--grok-user-bubble)' }}
+              style={{ background: 'var(--outgoing)' }}
             >
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-white" style={{ background: 'var(--grok-action-btn)' }}>
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-meta font-semibold text-white" style={{ background: 'var(--control)' }}>
                 {o.title.slice(0, 2).toUpperCase()}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[13px] text-white">{o.title}</span>
-                <span className="block truncate text-[11px]" style={{ color: 'var(--grok-text-muted)' }}>{o.sub}</span>
+                <span className="block truncate text-label text-white">{o.title}</span>
+                <span className="block truncate text-meta" style={{ color: 'var(--text-secondary)' }}>{o.sub}</span>
               </span>
-              {busy ? <Loader2 size={14} className="animate-spin" style={{ color: 'var(--grok-text-muted)' }} /> : <ChevronRight size={14} style={{ color: 'var(--grok-text-muted)' }} />}
+              {busy ? <Loader2 size={14} className="animate-spin" style={{ color: 'var(--text-secondary)' }} /> : <ChevronRight size={14} style={{ color: 'var(--text-secondary)' }} />}
             </button>
           ))}
         </div>
 
-        <p className="mt-4 text-[11px]" style={{ color: 'var(--grok-text-muted)', opacity: 0.7 }}>
+        <p className="mt-4 text-meta" style={{ color: 'var(--text-secondary)', opacity: 0.7 }}>
           Simulated connection for this demo. No real account is accessed.
         </p>
       </div>

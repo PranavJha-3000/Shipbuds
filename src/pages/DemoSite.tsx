@@ -35,18 +35,18 @@ export const DemoSite: React.FC = () => {
       <div className="flex h-12 items-center gap-3 border-b border-line px-4">
         <button
           onClick={() => navigate(`/p/${projectId}/deploy`)}
-          className="inline-flex items-center gap-2 rounded-full border border-line px-3 py-1.5 text-[12px] text-muted transition-colors hover:bg-surface hover:text-paper"
+          className="inline-flex items-center gap-2 rounded-full border border-line px-3 py-1.5 text-meta text-muted transition-colors hover:bg-surface hover:text-paper"
         >
           <ArrowLeft size={13} /> Back to Shipbuds
         </button>
         <div className="ml-auto flex items-center gap-3">
-          <span className="hidden font-mono text-[11px] text-muted sm:block">
+          <span className="hidden font-mono text-meta text-muted sm:block">
             {latest?.url ?? `${project.previewTemplateId}.shipbuds.app`}
           </span>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-[11px] text-paper">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-meta text-paper">
             <span className="h-1.5 w-1.5 rounded-full bg-accent" /> Live
           </span>
-          <span className="hidden text-[11px] text-muted sm:block">
+          <span className="hidden text-meta text-muted sm:block">
             Simulated deployment · <ExternalLink size={10} className="inline" /> shown in-app
           </span>
         </div>

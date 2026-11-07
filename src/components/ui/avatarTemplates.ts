@@ -52,4 +52,4 @@ export const resolveAvatarTemplate = (
 
 /** CSS gradient for a template. */
 export const templateGradient = (t: AvatarTemplate) =>
-  `linear-gradient(135deg, ${t.from}, ${t.to})`
+  t.from

@@ -50,8 +50,8 @@ export const Auth: React.FC = () => {
       <div className="relative w-full max-w-[360px]">
         <div className="mb-8 flex flex-col items-center text-center">
           <LogoPlaceholder />
-          <h1 className="mt-6 text-[20px] font-semibold tracking-tight text-paper">Shipbuds</h1>
-          <p className="mt-1.5 text-[13px] text-muted">
+          <h1 className="mt-6 text-title font-semibold tracking-tight text-paper">Shipbuds</h1>
+          <p className="mt-1.5 text-label text-muted">
             {mode === 'signup' ? 'Build software by talking to a team of agents.' : 'Welcome back. Pick up where you left off.'}
           </p>
         </div>
@@ -62,7 +62,7 @@ export const Auth: React.FC = () => {
               key={m}
               onClick={() => setMode(m)}
               className={cx(
-                'h-8 flex-1 rounded-full text-[13px] font-medium transition-colors',
+                'h-8 flex-1 rounded-full text-label font-medium transition-colors',
                 mode === m ? 'bg-accent text-white' : 'text-muted hover:text-paper',
               )}
             >
@@ -84,7 +84,7 @@ export const Auth: React.FC = () => {
 
         <div className="my-5 flex items-center gap-3">
           <span className="h-px flex-1 bg-line" />
-          <span className="text-[11px] text-muted">or</span>
+          <span className="text-meta text-muted">or</span>
           <span className="h-px flex-1 bg-line" />
         </div>
 
@@ -92,7 +92,7 @@ export const Auth: React.FC = () => {
           <GoogleMark /> Continue with Google
         </Button>
 
-        <button onClick={() => finish('Guest', '', 'guest')} className="mt-4 w-full text-center text-[12px] text-muted transition-colors hover:text-paper">
+        <button onClick={() => finish('Guest', '', 'guest')} className="mt-4 w-full text-center text-meta text-muted transition-colors hover:text-paper">
           or continue as guest
         </button>
       </div>
@@ -105,10 +105,10 @@ export const Auth: React.FC = () => {
               onClick={() => pickGoogle(a)}
               className="flex w-full items-center gap-3 rounded-card border border-line bg-ink px-3 py-2.5 text-left transition-colors hover:bg-bubble"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-bubble text-[11px] font-semibold text-paper">{a.avatar}</span>
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-bubble text-meta font-semibold text-paper">{a.avatar}</span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[13px] text-paper">{a.name}</span>
-                <span className="block truncate text-[11px] text-muted">{a.email}</span>
+                <span className="block truncate text-label text-paper">{a.name}</span>
+                <span className="block truncate text-meta text-muted">{a.email}</span>
               </span>
               <UserIcon size={14} className="shrink-0 text-muted" />
             </button>

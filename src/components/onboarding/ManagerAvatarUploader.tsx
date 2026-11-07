@@ -36,18 +36,18 @@ export const ManagerAvatarUploader: React.FC<{
             src={value}
             alt="Manager avatar"
             className="h-24 w-24 rounded-full object-cover"
-            style={{ border: '1px solid var(--grok-line)' }}
+            style={{ border: '1px solid var(--line)' }}
           />
         ) : (
           <button
             type="button"
             onClick={() => ref.current?.click()}
             className="flex h-24 w-24 flex-col items-center justify-center gap-1.5 rounded-full transition-colors hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
-            style={{ background: 'var(--grok-search-input)', border: '1px dashed var(--grok-line)' }}
+            style={{ background: 'var(--plane-2)', border: '1px dashed var(--line)' }}
             aria-label="Upload Manager avatar"
           >
-            <Upload size={18} style={{ color: 'var(--grok-text-muted)' }} />
-            <span className="text-[10px]" style={{ color: 'var(--grok-text-muted)' }}>Upload</span>
+            <Upload size={18} style={{ color: 'var(--text-secondary)' }} />
+            <span className="text-meta" style={{ color: 'var(--text-secondary)' }}>Upload</span>
           </button>
         )}
 
@@ -57,7 +57,7 @@ export const ManagerAvatarUploader: React.FC<{
             onClick={() => onChange('')}
             aria-label="Remove avatar"
             className="absolute -right-0.5 -top-0.5 flex h-6 w-6 items-center justify-center rounded-full transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
-            style={{ background: 'var(--grok-action-btn)' }}
+            style={{ background: 'var(--control)' }}
           >
             <X size={12} className="text-white" />
           </button>
@@ -67,8 +67,8 @@ export const ManagerAvatarUploader: React.FC<{
       <button
         type="button"
         onClick={() => ref.current?.click()}
-        className="rounded-full px-3 py-1 text-[12px] transition-colors hover:bg-white/8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
-        style={{ color: 'var(--grok-text-muted)' }}
+        className="rounded-full px-3 py-1 text-meta transition-colors hover:bg-white/8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+        style={{ color: 'var(--text-secondary)' }}
       >
         {value ? 'Choose a different image' : 'Upload image'}
       </button>

@@ -14,7 +14,7 @@ export const OnboardingShell: React.FC<{
   showBrand?: boolean
   showProgress?: boolean
 }> = ({ step, children, footer, showBrand = true, showProgress = true }) => (
-  <div className="flex min-h-screen flex-col" style={{ background: 'var(--grok-app-bg)' }}>
+  <div className="flex min-h-screen flex-col" style={{ background: 'var(--plane-0)' }}>
     <header className="flex items-center justify-between px-6 py-6 sm:px-10">
       {showBrand ? <LogoPlaceholder /> : <span />}
       {showProgress && <OnboardingProgress step={step} />}

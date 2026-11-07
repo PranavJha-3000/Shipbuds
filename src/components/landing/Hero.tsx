@@ -23,7 +23,7 @@ export const Hero: React.FC = () => {
       <div className="mx-auto max-w-2xl text-center">
         <Eyebrow>{COPY.hero.eyebrow}</Eyebrow>
         <h1 className="mt-4 text-balance text-[34px] font-semibold leading-[40px] tracking-tight text-paper md:text-[48px] md:leading-[54px]">
-          Vibe coding feels like <span className="text-accentRed">a group chat.</span>
+          Vibe coding feels like <span className="text-accent">a group chat.</span>
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-body leading-relaxed text-muted">{COPY.hero.sub}</p>
         <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">

@@ -16,15 +16,15 @@ export const ConnectionStatus: React.FC<{ connected: boolean; connectedLabel?: s
         type="button"
         onClick={onDisconnect}
         title="Disconnect"
-        className="inline-flex items-center gap-1.5 rounded-full px-1.5 py-0.5 text-[12px] font-medium text-white transition-colors hover:bg-white/8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+        className="inline-flex items-center gap-1.5 rounded-full px-1.5 py-0.5 text-meta font-medium text-white transition-colors hover:bg-white/8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
       >
-        <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full" style={{ background: 'var(--grok-action-btn)' }}>
+        <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full" style={{ background: 'var(--control)' }}>
           <Check size={9} className="text-white" strokeWidth={3} />
         </span>
         {connectedLabel ?? 'Connected'}
       </button>
       {detail && (
-        <span className="max-w-[160px] truncate text-[11px]" style={{ color: 'var(--grok-text-muted)' }}>
+        <span className="max-w-[160px] truncate text-meta" style={{ color: 'var(--text-secondary)' }}>
           {detail}
         </span>
       )}
@@ -50,16 +50,16 @@ export const IntegrationCard: React.FC<{
       'flex w-full items-center gap-4 rounded-[10px] px-4 py-3.5 text-left transition-colors',
       connected ? 'bg-white/[0.04]' : 'bg-white/[0.02] hover:bg-white/[0.05]',
     )}
-    style={{ border: `1px solid ${connected ? 'var(--grok-line)' : 'transparent'}` }}
+    style={{ border: `1px solid ${connected ? 'var(--line)' : 'transparent'}` }}
   >
     <span
       className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px]"
-      style={{ background: 'var(--grok-action-btn)' }}
+      style={{ background: 'var(--control)' }}
     >
       {icon ? (
         <img src={icon} alt="" aria-hidden className="brand-icon h-[18px] w-[18px]" />
       ) : (
-        <span className="text-[12px] font-semibold" style={{ color: 'var(--grok-text-main)' }}>
+        <span className="text-meta font-semibold" style={{ color: 'var(--text-primary)' }}>
           {name.slice(0, 1)}
         </span>
       )}
@@ -67,19 +67,19 @@ export const IntegrationCard: React.FC<{
 
     <div className="min-w-0 flex-1">
       <div className="flex items-center gap-2">
-        <span className="text-[14px] font-medium text-white">{name}</span>
+        <span className="text-body font-medium text-white">{name}</span>
         {primary && !connected && (
-          <span className="rounded-full px-1.5 py-0.5 text-[10px] font-medium" style={{ background: 'var(--grok-action-btn)', color: 'var(--grok-text-muted)' }}>
+          <span className="rounded-full px-1.5 py-0.5 text-meta font-medium" style={{ background: 'var(--control)', color: 'var(--text-secondary)' }}>
             Primary
           </span>
         )}
         {recommended && !connected && (
-          <span className="rounded-full px-1.5 py-0.5 text-[10px] font-medium" style={{ background: 'var(--grok-action-btn)', color: 'var(--grok-text-muted)' }}>
+          <span className="rounded-full px-1.5 py-0.5 text-meta font-medium" style={{ background: 'var(--control)', color: 'var(--text-secondary)' }}>
             Recommended
           </span>
         )}
       </div>
-      <p className="mt-0.5 text-[12px] leading-relaxed" style={{ color: 'var(--grok-text-muted)' }}>
+      <p className="mt-0.5 text-meta leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
         {description}
       </p>
     </div>
@@ -90,8 +90,8 @@ export const IntegrationCard: React.FC<{
       <button
         type="button"
         onClick={onConnect}
-        className="inline-flex h-8 shrink-0 items-center gap-1 rounded-full px-3.5 text-[13px] font-medium text-white transition-colors hover:bg-white/8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
-        style={{ border: '1px solid var(--grok-line)' }}
+        className="inline-flex h-8 shrink-0 items-center gap-1 rounded-full px-3.5 text-label font-medium text-white transition-colors hover:bg-white/8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+        style={{ border: '1px solid var(--line)' }}
       >
         Connect <ChevronRight size={13} />
       </button>

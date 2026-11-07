@@ -29,7 +29,7 @@ export const Onboarding: React.FC<{ onDone: () => void }> = ({ onDone }) => {
       <OnboardingShell step="welcome" footer={<OnboardingNav onNext={next} />}>
         <div
           className="flex w-full max-w-[440px] items-center justify-center overflow-hidden rounded-[12px] border p-4"
-          style={{ borderColor: 'var(--grok-line)', background: 'var(--grok-sidebar-bg)' }}
+          style={{ borderColor: 'var(--line)', background: 'var(--plane-1)' }}
         >
           <img
             src={ASSETS.animations.onboardingWelcome}
@@ -40,7 +40,7 @@ export const Onboarding: React.FC<{ onDone: () => void }> = ({ onDone }) => {
         <h1 className="mt-9 text-[30px] font-semibold tracking-tight text-white sm:text-[36px]">
           Welcome to Shipbuds
         </h1>
-        <p className="mt-3 max-w-[38ch] text-[15px] leading-relaxed" style={{ color: 'var(--grok-text-muted)' }}>
+        <p className="mt-3 max-w-[38ch] text-body leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
           Build software by talking to your AI engineering team.
         </p>
       </OnboardingShell>
@@ -53,7 +53,7 @@ export const Onboarding: React.FC<{ onDone: () => void }> = ({ onDone }) => {
       <OnboardingShell step="vibe" footer={<OnboardingNav showBack onBack={prev} onNext={next} />}>
         <div
           className="flex w-full max-w-[460px] items-center justify-center overflow-hidden rounded-[12px] border p-4"
-          style={{ borderColor: 'var(--grok-line)', background: 'var(--grok-sidebar-bg)' }}
+          style={{ borderColor: 'var(--line)', background: 'var(--plane-1)' }}
         >
           <img
             src={ASSETS.animations.onboardingTeam}
@@ -64,7 +64,7 @@ export const Onboarding: React.FC<{ onDone: () => void }> = ({ onDone }) => {
         <h1 className="mt-9 text-[30px] font-semibold tracking-tight text-white sm:text-[36px]">
           Vibe coding, as a team.
         </h1>
-        <p className="mt-3 max-w-[40ch] text-[15px] leading-relaxed" style={{ color: 'var(--grok-text-muted)' }}>
+        <p className="mt-3 max-w-[40ch] text-body leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
           Talk to The Manager. Watch specialists build, review, test and ship together.
         </p>
       </OnboardingShell>
@@ -80,10 +80,10 @@ export const Onboarding: React.FC<{ onDone: () => void }> = ({ onDone }) => {
         step="integrations"
         footer={<OnboardingNav showBack onBack={prev} onNext={next} onSkip={next} nextLabel="Continue" />}
       >
-        <h1 className="text-[26px] font-semibold tracking-tight text-white sm:text-[30px]">
+        <h1 className="text-display font-semibold tracking-tight text-white sm:text-[30px]">
           Connect the tools you already use.
         </h1>
-        <p className="mt-2.5 text-[14px]" style={{ color: 'var(--grok-text-muted)' }}>
+        <p className="mt-2.5 text-body" style={{ color: 'var(--text-secondary)' }}>
           Bring your existing workflow into Shipbuds.
         </p>
 

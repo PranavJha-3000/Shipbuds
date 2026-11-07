@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react'
 
 /** Neutral pill controls, on the shared workspace palette. Focus is a soft white ring. */
 const base =
-  'inline-flex h-11 items-center justify-center gap-2 rounded-full px-6 text-[14px] font-medium transition-colors ' +
+  'inline-flex h-11 items-center justify-center gap-2 rounded-full px-6 text-body font-medium transition-colors ' +
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 disabled:opacity-35 disabled:pointer-events-none'
 
 const variants = {

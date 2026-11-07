@@ -27,8 +27,8 @@ export const ManagerSetupForm: React.FC<{ onDone: () => void }> = ({ onDone }) =
 
   return (
     <div className="flex w-full flex-col items-center">
-      <h1 className="text-[28px] font-semibold tracking-tight text-white sm:text-[32px]">Meet The Manager</h1>
-      <p className="mt-2.5 max-w-[40ch] text-[14px] leading-relaxed" style={{ color: 'var(--grok-text-muted)' }}>
+      <h1 className="text-display font-semibold tracking-tight text-white sm:text-[32px]">Meet The Manager</h1>
+      <p className="mt-2.5 max-w-[40ch] text-body leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
         The Manager coordinates your AI engineering team.
       </p>
 
@@ -44,9 +44,9 @@ export const ManagerSetupForm: React.FC<{ onDone: () => void }> = ({ onDone }) =
 
       {/* Canonical identity, with the optional nickname layered underneath. */}
       <div className="mt-6 text-center">
-        <p className="text-[16px] font-semibold text-white">The Manager</p>
+        <p className="text-title font-semibold text-white">The Manager</p>
         {nickname.trim() && (
-          <p className="mt-0.5 text-[13px]" style={{ color: 'var(--grok-text-muted)' }}>
+          <p className="mt-0.5 text-label" style={{ color: 'var(--text-secondary)' }}>
             {nickname.trim()}
           </p>
         )}
@@ -55,8 +55,8 @@ export const ManagerSetupForm: React.FC<{ onDone: () => void }> = ({ onDone }) =
       <div className="mt-6 w-full max-w-[300px] text-left">
         <label
           htmlFor="manager-nickname"
-          className="mb-2 block text-[11px] font-medium uppercase tracking-wider"
-          style={{ color: 'var(--grok-text-muted)' }}
+          className="mb-2 block text-meta font-medium uppercase tracking-wider"
+          style={{ color: 'var(--text-secondary)' }}
         >
           Nickname <span className="normal-case tracking-normal opacity-70">(optional)</span>
         </label>
@@ -67,12 +67,12 @@ export const ManagerSetupForm: React.FC<{ onDone: () => void }> = ({ onDone }) =
           placeholder="e.g. Atlas"
           maxLength={24}
           className={cx(
-            'h-11 w-full rounded-full px-4 text-[14px] text-white transition-colors',
-            'placeholder:text-[var(--grok-text-muted)] focus:outline-none',
+            'h-11 w-full rounded-full px-4 text-body text-white transition-colors',
+            'placeholder:text-[var(--text-secondary)] focus:outline-none',
           )}
-          style={{ background: 'var(--grok-search-input)', border: '1px solid var(--grok-line)' }}
+          style={{ background: 'var(--plane-2)', border: '1px solid var(--line)' }}
           onFocus={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.32)' }}
-          onBlur={(e) => { e.currentTarget.style.borderColor = 'var(--grok-line)' }}
+          onBlur={(e) => { e.currentTarget.style.borderColor = 'var(--line)' }}
         />
       </div>
 
