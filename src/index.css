@@ -257,9 +257,31 @@
       display: none;
     }
   }
+  /* Below 900px the Preview is a bottom sheet, opened from the header. */
+  @media (min-width: 901px) {
+    .preview-close,
+    .preview-open { display: none !important; }
+  }
   @media (max-width: 900px) {
     .preview-pane {
-      display: none;
+      position: fixed;
+      inset: auto 0 0 0;
+      z-index: 40;
+      width: 100%;
+      min-width: 0;
+      max-width: none;
+      height: 88dvh;
+      border-left: 0;
+      border-top: 1px solid var(--line);
+      border-radius: 12px 12px 0 0;
+      transform: translateY(100%);
+      visibility: hidden;
+      transition: transform 260ms cubic-bezier(.2,.8,.2,1), visibility 0s linear 260ms;
+    }
+    .preview-pane[data-open='true'] {
+      transform: translateY(0);
+      visibility: visible;
+      transition: transform 260ms cubic-bezier(.2,.8,.2,1);
     }
   }
 }

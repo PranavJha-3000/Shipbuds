@@ -55,6 +55,7 @@ const ReturnNotice: React.FC = () => {
 }
 
 export const AppShell: React.FC = () => {
+  const [previewOpen, setPreviewOpen] = React.useState(false)
   const { pathname } = useLocation()
   const isCanvas = pathname.endsWith('/canvas')
   const hasProject = pathname.startsWith('/p/')
@@ -63,6 +64,8 @@ export const AppShell: React.FC = () => {
 
   // The persisted `sidebarOpen` is a desktop preference. Below `lg` the sidebar
   // is a slide-over, so starting open would cover the conversation on load.
+  React.useEffect(() => setPreviewOpen(false), [pathname])
+
   React.useEffect(() => {
     if (window.matchMedia('(max-width: 1023px)').matches) setSidebarOpen(false)
   }, [setSidebarOpen])
@@ -71,14 +74,15 @@ export const AppShell: React.FC = () => {
     <div className="relative flex h-[100dvh] w-screen overflow-hidden bg-ink">
       <ManagerSidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopBar />
+        <TopBar onPreview={showRightPanel ? () => setPreviewOpen(true) : undefined} />
         <div className="flex min-h-0 flex-1">
           <main className="min-w-0 flex-1">
             <Outlet />
           </main>
-          {showRightPanel && <PreviewPane />}
+          {showRightPanel && <PreviewPane open={previewOpen} onClose={() => setPreviewOpen(false)} />}
         </div>
       </div>
+      {previewOpen && <div className="preview-scrim fixed inset-0 z-30 bg-black/50" onClick={() => setPreviewOpen(false)} aria-hidden />}
       <ReturnNotice />
     </div>
   )

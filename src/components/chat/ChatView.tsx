@@ -212,7 +212,7 @@ export const ChatView: React.FC<{ mode: 'manager' | 'channel' | 'dm'; channelId?
         </button>
       )}
 
-      <div className="shrink-0 border-t border-line bg-ink px-5 pb-5 pt-2">
+      <div className="shrink-0 border-t border-line bg-ink px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-2">
         <div className="mx-auto max-w-[720px]">
           <div className="flex items-end gap-2 rounded-md border border-line bg-input p-2 transition-colors duration-instant ease-standard focus-within:border-accent/60">
             <textarea

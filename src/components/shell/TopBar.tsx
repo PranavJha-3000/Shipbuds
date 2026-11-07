@@ -9,7 +9,7 @@ import { TeamStrip } from './TeamStrip'
 import { Popover, MenuItem } from '../ui/Popover'
 import { StatusDot } from '../ui/StatusDot'
 import { UiDemoVideoDialog } from '../canvas/UiDemoVideoDialog'
-import { Code2, Rocket, Palette, ArrowLeft, Lock, MoreHorizontal } from 'lucide-react'
+import { Code2, Rocket, Palette, ArrowLeft, Lock, MoreHorizontal, Monitor } from 'lucide-react'
 
 const TOOLS: { to: string; label: string; icon: React.ReactNode }[] = [
   { to: 'canvas', label: 'UI Head', icon: <Palette size={16} /> },
@@ -30,8 +30,8 @@ const TOOLS: { to: string; label: string; icon: React.ReactNode }[] = [
  * five ghost icon buttons, so it outweighed every other control. It is now one
  * item in an overflow menu, and all six controls carry equal weight.
  */
-export const TopBar: React.FC<{ title?: string; subtitle?: string; onBack?: () => void }> = ({
-  title, subtitle, onBack,
+export const TopBar: React.FC<{ title?: string; subtitle?: string; onBack?: () => void; onPreview?: () => void }> = ({
+  title, subtitle, onBack, onPreview,
 }) => {
   const { projectId = '' } = useParams()
   const { pathname } = useLocation()
@@ -157,6 +157,18 @@ export const TopBar: React.FC<{ title?: string; subtitle?: string; onBack?: () =
             )
           })}
           </div>
+        )}
+
+        {onPreview && (
+          <button
+            type="button"
+            title="Preview"
+            aria-label="Open preview"
+            onClick={onPreview}
+            className="preview-open coarse-hit ml-1 flex h-8 w-8 items-center justify-center rounded-full text-muted transition-colors duration-instant ease-standard hover:bg-surface hover:text-paper"
+          >
+            <Monitor size={16} />
+          </button>
         )}
 
         {/* Overflow: secondary conversation actions, weighted identically to the

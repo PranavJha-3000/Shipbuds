@@ -9,9 +9,9 @@ import { cx } from '../ui/cx'
 import { VibingChooser, BrainrotLifecycle } from '../vibing/VibingChooser'
 import { MusicPlayer } from '../vibing/MusicPlayer'
 import { useVibingSession } from '../vibing/session'
-import { Monitor, Tablet, Smartphone, RotateCw, ExternalLink, Copy, Check, Sparkles, AlertTriangle } from 'lucide-react'
+import { Monitor, Tablet, Smartphone, RotateCw, ExternalLink, Copy, Check, Sparkles, AlertTriangle, X } from 'lucide-react'
 
-export const PreviewPane: React.FC = () => {
+export const PreviewPane: React.FC<{ open?: boolean; onClose?: () => void }> = ({ open = false, onClose }) => {
   const { projectId = '' } = useParams()
   const navigate = useNavigate()
   const project = useStore((s) => s.projects.find((p) => p.id === projectId))
@@ -46,7 +46,7 @@ export const PreviewPane: React.FC = () => {
   const widths = { desktop: '100%', tablet: '720px', mobile: '390px' }
 
   return (
-    <aside className="preview-pane flex h-full w-[46%] min-w-[400px] max-w-[640px] shrink-0 flex-col border-l border-line bg-ink">
+    <aside data-open={open} aria-label="Preview" className="preview-pane flex h-full w-[46%] min-w-[400px] max-w-[640px] shrink-0 flex-col border-l border-line bg-ink">
       <div className="preview-block flex min-h-0 flex-1 flex-col">
         <div className="flex h-11 shrink-0 items-center gap-2 border-b border-line px-3">
           <span className="text-[12px] font-medium text-muted">Preview</span>
@@ -65,6 +65,9 @@ export const PreviewPane: React.FC = () => {
                 </IconButton>
               )
             })}
+            <IconButton label="Close preview" onClick={onClose} className="preview-close">
+              <X size={14} />
+            </IconButton>
           </div>
         </div>
 
