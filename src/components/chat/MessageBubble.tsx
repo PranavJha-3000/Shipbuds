@@ -46,11 +46,13 @@ export const MessageBubble: React.FC<{
   const isUser = message.authorId === 'user'
   const isManager = message.authorId === 'manager'
   const agent = agentById(message.authorId)
+  // Only messages that just arrived rise in; reopening a thread should not replay history.
+  const fresh = Date.now() - message.ts < 1500
 
   // Yours: right-aligned, no avatar, no name. The bubble is the whole object.
   if (isUser) {
     return (
-      <div className={cx('group flex justify-end', lastInGroup ? 'mb-5' : 'mb-1.5')}>
+      <div className={cx('group flex justify-end', lastInGroup ? 'mb-5' : 'mb-1.5', fresh && 'animate-rise')}>
         <div className="max-w-[min(560px,78%)]">
           <div className="rounded-2xl bg-bubble px-3.5 py-2.5 text-body leading-relaxed text-paper">
             {message.text}
@@ -65,7 +67,7 @@ export const MessageBubble: React.FC<{
   }
 
   return (
-    <div className={cx('group flex items-start gap-3', lastInGroup ? 'mb-5' : 'mb-1.5')}>
+    <div className={cx('group flex items-start gap-3', lastInGroup ? 'mb-5' : 'mb-1.5', fresh && 'animate-rise')}>
       {/*
         The gutter is always present, so text never shifts horizontally when a
         turn starts or ends — the column stays put and only the avatar appears.
