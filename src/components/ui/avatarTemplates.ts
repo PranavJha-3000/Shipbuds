@@ -1,36 +1,23 @@
 /**
- * AVATAR TEMPLATES — the colour system behind a Manager's fallback PFP.
+ * AVATAR TEMPLATES — the ids a Manager can pin as its face.
  *
- * A Manager without an uploaded photo used to render as the same grey
- * initial everywhere: every identity read as a placeholder, and there was
- * no way to tell Managers apart at a glance. A template replaces that grey
- * disc with a gradient, resolved in two steps:
- *
- *   1. an explicit template id chosen at creation time (stored on the
- *      Manager, or on the onboarding draft), else
- *   2. a deterministic pick hashed from the Manager's id — so existing
- *      Managers get a stable, unique colour with no persisted migration.
- *
- * An uploaded photo always wins over the template.
+ * The ids are stored on Managers (and on the onboarding draft), so they keep their
+ * old colour names even though each now maps to a BoopFace skin in `boopMap.ts`.
+ * A Manager with no explicit id gets a stable face hashed from its own id, so
+ * existing Managers need no migration. An uploaded photo always wins.
  */
-export interface AvatarTemplate {
-  id: string
-  from: string
-  to: string
-}
-
-export const AVATAR_TEMPLATES: AvatarTemplate[] = [
-  { id: 'violet', from: '#7c3aed', to: '#ec4899' },
-  { id: 'ocean', from: '#2563eb', to: '#06b6d4' },
-  { id: 'ember', from: '#ea580c', to: '#f43f5e' },
-  { id: 'forest', from: '#059669', to: '#14b8a6' },
-  { id: 'sunrise', from: '#d97706', to: '#dc2626' },
-  { id: 'indigo', from: '#4f46e5', to: '#8b5cf6' },
-  { id: 'lagoon', from: '#0891b2', to: '#3b82f6' },
-  { id: 'candy', from: '#db2777', to: '#f97316' },
+export const AVATAR_TEMPLATES: { id: string }[] = [
+  { id: 'violet' },
+  { id: 'ocean' },
+  { id: 'ember' },
+  { id: 'forest' },
+  { id: 'sunrise' },
+  { id: 'indigo' },
+  { id: 'lagoon' },
+  { id: 'candy' },
 ]
 
-/** FNV-1a — tiny, stable across sessions, good spread over 8 buckets. */
+/** FNV-1a — tiny, stable across sessions, good spread over a small set. */
 export const hash = (s: string) => {
   let h = 2166136261
   for (let i = 0; i < s.length; i++) {
@@ -39,17 +26,3 @@ export const hash = (s: string) => {
   }
   return Math.abs(h)
 }
-
-export const templateById = (id?: string) => AVATAR_TEMPLATES.find((t) => t.id === id)
-
-/** Always returns a template: an explicit id wins, else hash the fallback key. */
-export const resolveAvatarTemplate = (
-  id: string | undefined,
-  fallbackKey: string,
-): AvatarTemplate =>
-  templateById(id) ??
-  AVATAR_TEMPLATES[hash(fallbackKey || 'manager') % AVATAR_TEMPLATES.length]
-
-/** CSS gradient for a template. */
-export const templateGradient = (t: AvatarTemplate) =>
-  t.from

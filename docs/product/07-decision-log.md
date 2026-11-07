@@ -99,6 +99,16 @@ Trade-off: the 11px labels moved to 12px on some screens, and some visual charac
 Revisit if: sessions show people cannot find Deploy under Ship, or cannot tell sections apart.
 Limit: I checked these in a browser pane about 840px wide and a 375px emulation. Wider layouts were not checked.
 
+### D11. Use BoopFace for agent and Manager avatars
+
+Context: initials and flat colour discs made every agent look like a placeholder, and nothing on the avatar said what the agent was doing.
+Options: keep initials; draw our own mascot; use the MIT-licensed BoopFace component.
+Decision: use BoopFace, a `<boop-face>` Web Component. Each specialist has a fixed skin, Managers get a skin from their saved template id, and the faces change expression with task status and typing.
+Reasoning: it gives each teammate a recognisable face and a visible state for little code, and it supports the "who is doing what" test.
+Trade-off: a new dependency (about 40 KB gzip on the main chunk plus lazy skin chunks), and a third party's character identity, which the licence does not let us present as our own. Frame rate with many faces was not measured.
+Consequence: credited in the README. Old template ids keep working and map to skins.
+Revisit if: the licence terms change, performance suffers with long threads, or the faces read as childish to the target users in the [sessions](./03-discovery-plan.md).
+
 ## Proposed decisions (not yet taken)
 
 ### P1. Define success as use after the build, not the build

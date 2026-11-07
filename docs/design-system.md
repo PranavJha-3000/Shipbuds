@@ -42,6 +42,10 @@ A card is something you can act on, not another message. Plan and Approach are j
 
 Status is never colour alone. Blue is working or primary, purple is needs you, red is failed, neutral is done or idle. Pair the colour with an icon or a label.
 
+## Avatars
+
+Managers and specialists wear a BoopFace robot (`src/components/ui/BoopAvatar.tsx`, library by CX ArtLab, MIT). Each specialist always has the same skin, and a Manager's skin comes from its saved template id or a stable hash of its id (`src/components/ui/boopMap.ts`). An uploaded Manager photo always wins. Faces are decorative and `aria-hidden`, so names and status stay in text. Lists leave pointer-following off, and only large faces follow the pointer. The Team strip and the Manager header change expression with status and typing. Keep the number of faces on screen modest: 40 rendered cleanly, but frame rate was not measured.
+
 ## Narrow screens
 
 Below 1024px the sidebar is a slide-over and starts closed. Below 900px the Preview is a bottom sheet opened from the header. The composer respects the device safe area.

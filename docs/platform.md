@@ -46,6 +46,7 @@ Thesis test: at any moment a user can answer *"who is doing what, and what needs
 | Import | Bring an existing repo | Simulated |
 | Deploy | Preview/prod, logs, QR, rollback | Simulated |
 | Vibing | Secondary break experience | Implemented |
+| Agent faces | BoopFace avatars for Managers and specialists, with state expressions | Implemented |
 | Model / framework choice | Defaults for Maya, control for Dev | Future |
 
 ## Current capabilities

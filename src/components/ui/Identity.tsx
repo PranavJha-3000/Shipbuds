@@ -2,9 +2,9 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import { useStore } from '../../store/store'
 import { cx } from './cx'
-import { AVATAR_TEMPLATES, templateGradient } from './avatarTemplates'
+import { AVATAR_TEMPLATES } from './avatarTemplates'
 import { BoopAvatar } from './BoopAvatar'
-import { skinForAgent, skinForTemplate, type BoopAction } from './boopMap'
+import { AVATAR_SKINS, skinForAgent, skinForTemplate, type BoopAction } from './boopMap'
 import { Shuffle } from 'lucide-react'
 
 /**
@@ -119,14 +119,14 @@ export const AvatarTemplatePicker: React.FC<{
   className?: string
 }> = ({ value, onChange, className }) => (
   <div className={cx('flex flex-col items-center gap-2', className)}>
-    <p className="text-[11px] font-medium uppercase tracking-wider text-muted">PFP template</p>
-    <div className="flex flex-wrap justify-center gap-2" role="radiogroup" aria-label="PFP template">
+    <p className="text-micro font-medium uppercase text-muted">Face</p>
+    <div className="flex flex-wrap justify-center gap-2" role="radiogroup" aria-label="Face">
       <button
         type="button"
         role="radio"
         aria-checked={value === ''}
-        aria-label="Auto colour"
-        title="Auto — a unique colour per Manager"
+        aria-label="Automatic face"
+        title="Automatic: a different face for each Manager"
         onClick={() => onChange('')}
         className={cx(
           'flex h-7 w-7 items-center justify-center rounded-full border transition-colors duration-instant ease-standard',
@@ -137,21 +137,22 @@ export const AvatarTemplatePicker: React.FC<{
       >
         <Shuffle size={12} aria-hidden />
       </button>
-      {AVATAR_TEMPLATES.map((t) => (
+      {AVATAR_TEMPLATES.map((t, i) => (
         <button
           key={t.id}
           type="button"
           role="radio"
           aria-checked={value === t.id}
-          aria-label={`${t.id} template`}
-          title={t.id}
+          aria-label={`Face ${i + 1}`}
+          title={`Face ${i + 1}`}
           onClick={() => onChange(t.id)}
           className={cx(
-            'h-7 w-7 rounded-full transition-transform duration-instant ease-standard hover:scale-110',
+            'flex h-8 w-8 items-center justify-center rounded-full transition-transform duration-instant ease-standard hover:scale-110',
             value === t.id ? 'ring-2 ring-accent ring-offset-2 ring-offset-ink' : 'ring-1 ring-line',
           )}
-          style={{ background: templateGradient(t) }}
-        />
+        >
+          <BoopAvatar skin={AVATAR_SKINS[t.id]} px={28} />
+        </button>
       ))}
     </div>
   </div>
