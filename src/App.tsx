@@ -6,8 +6,7 @@ import { Toaster } from './components/ui/Toaster'
 import { ChatView } from './components/chat/ChatView'
 import { CanvasView } from './components/canvas/CanvasView'
 import { CodeView } from './components/code/CodeView'
-import { GitHubView } from './components/github/GitHubView'
-import { DeployView } from './components/deploy/DeployView'
+import { ShipView } from './components/ship/ShipView'
 import { Auth } from './pages/Auth'
 import { FirstRun } from './pages/FirstRun'
 import { Identity } from './components/ui/Identity'
@@ -115,8 +114,10 @@ const App: React.FC = () => (
         <Route path="dm/:agentId" element={<DmRoute />} />
         <Route path="canvas" element={<><Touch view="canvas" /><CanvasView /></>} />
         <Route path="code" element={<><Touch view="code" /><CodeView /></>} />
-        <Route path="github" element={<><Touch view="github" /><GitHubView /></>} />
-        <Route path="deploy" element={<><Touch view="deploy" /><DeployView /></>} />
+        <Route path="ship" element={<><Touch view="ship" /><ShipView tab="github" /></>} />
+        <Route path="ship/deploy" element={<><Touch view="ship" /><ShipView tab="deploy" /></>} />
+        <Route path="github" element={<Navigate to="../ship" replace />} />
+        <Route path="deploy" element={<Navigate to="../ship/deploy" replace />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

@@ -10,17 +10,11 @@ import { Popover, MenuItem } from '../ui/Popover'
 import { StatusDot } from '../ui/StatusDot'
 import { UiDemoVideoDialog } from '../canvas/UiDemoVideoDialog'
 import { Code2, Rocket, Palette, ArrowLeft, Lock, MoreHorizontal } from 'lucide-react'
-import { ASSETS } from '../../assets'
-
-const GitHubToolIcon: React.FC = () => (
-  <img src={ASSETS.icons.github} alt="" aria-hidden className="brand-icon h-4 w-4" />
-)
 
 const TOOLS: { to: string; label: string; icon: React.ReactNode }[] = [
   { to: 'canvas', label: 'UI Head', icon: <Palette size={16} /> },
   { to: 'code', label: 'Code', icon: <Code2 size={16} /> },
-  { to: 'github', label: 'GitHub', icon: <GitHubToolIcon /> },
-  { to: 'deploy', label: 'Deploy', icon: <Rocket size={16} /> },
+  { to: 'ship', label: 'Ship', icon: <Rocket size={16} /> },
 ]
 
 /**
@@ -83,7 +77,7 @@ export const TopBar: React.FC<{ title?: string; subtitle?: string; onBack?: () =
   const hasProject = !!project
 
   /** The tool matching the current route, if any. */
-  const activeTool = TOOLS.find((t) => pathname.endsWith(`/${t.to}`))?.to ?? null
+  const activeTool = TOOLS.find((t) => pathname.includes(`/${t.to}`))?.to ?? null
 
   /** UI Head teaser: pressing the UI Head button always shows the demo video first. */
   const [demoOpen, setDemoOpen] = React.useState(false)

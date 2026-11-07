@@ -34,7 +34,7 @@ export const DemoSite: React.FC = () => {
     <div className="min-h-screen bg-ink">
       <div className="flex h-12 items-center gap-3 border-b border-line px-4">
         <button
-          onClick={() => navigate(`/p/${projectId}/deploy`)}
+          onClick={() => navigate(`/p/${projectId}/ship/deploy`)}
           className="inline-flex items-center gap-2 rounded-full border border-line px-3 py-1.5 text-meta text-muted transition-colors hover:bg-surface hover:text-paper"
         >
           <ArrowLeft size={13} /> Back to Shipbuds

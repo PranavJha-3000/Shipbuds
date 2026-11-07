@@ -113,7 +113,7 @@ export const PreviewPane: React.FC = () => {
               actionLabel="Retry build"
               onAction={() => retryBuild(projectId)}
               secondaryLabel="View build log"
-              onSecondary={() => navigate(`/p/${projectId}/deploy`)}
+              onSecondary={() => navigate(`/p/${projectId}/ship/deploy`)}
             />
           </div>
         )}
