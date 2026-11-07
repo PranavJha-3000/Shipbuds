@@ -111,7 +111,7 @@ export const TopBar: React.FC<{ title?: string; subtitle?: string; onBack?: () =
           aria-expanded={sidebarOpen}
           className="coarse-hit flex shrink-0 items-center rounded-full transition-transform duration-instant ease-standard active:scale-95 lg:hidden"
         >
-          <Identity managerId={project?.managerId} size="md" />
+          <Identity managerId={project?.managerId} size="md" action={managerThread?.typing ? 'waiting-spin' : undefined} />
         </button>
       )}
 

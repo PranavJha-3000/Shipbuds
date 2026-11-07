@@ -88,6 +88,10 @@ Intentionally simulated so the whole product is demonstrable without infrastruct
 
 Everything the app stores lives in `localStorage`, so returning to a project resumes exactly where you left off. See `docs/architecture/architecture.md` for the full description and the list of known limitations.
 
+## Credits
+
+Avatars are [BoopFace](https://github.com/CX-ArtLab/BoopFace) by CX ArtLab, used under the MIT licence. The character and its visual identity belong to CX ArtLab. Shipbuds does not present it as its own character.
+
 ## Notes
 
 - Channels start empty and activate only when the Manager brings the team in — see the empty state: *"Nothing here yet — this channel activates once Manager brings the team in."*

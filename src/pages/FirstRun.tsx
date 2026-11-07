@@ -30,7 +30,7 @@ export const FirstRun: React.FC<{ inline?: boolean }> = ({ inline }) => {
           </div>
         )}
         <EmptyState
-          icon={<Identity size="lg" />}
+          icon={<Identity size="lg" live />}
           title="No projects yet"
           body="Start a conversation with The Manager and tell it what you want to build."
           actionLabel="New project"
