@@ -29,7 +29,7 @@ const Shell: React.FC<{ children: React.ReactNode; className?: string }> = ({ ch
 
 /** A resolved card shrinks to one quiet line so the thread stops stacking boxes. */
 const Resolved: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <p className="flex items-center gap-2 text-meta text-muted">
+  <p className="flex animate-rise items-center gap-2 text-meta text-muted">
     <Check size={12} className="shrink-0" aria-hidden />
     <span className="min-w-0">{children}</span>
   </p>

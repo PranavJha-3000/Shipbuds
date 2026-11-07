@@ -4,7 +4,6 @@ import { useStore } from '../../store/store'
 import { agentById } from '../../store/roster'
 import type { ChannelId } from '../../store/types'
 import { Identity } from '../ui/Identity'
-import { AccountMenu } from './AccountMenu'
 import { TeamStrip } from './TeamStrip'
 import { Popover, MenuItem } from '../ui/Popover'
 import { StatusDot } from '../ui/StatusDot'
@@ -196,9 +195,6 @@ export const TopBar: React.FC<{ title?: string; subtitle?: string; onBack?: () =
           </Popover>
         )}
 
-        <div className="ml-0.5">
-          <AccountMenu />
-        </div>
       </div>
 
       {hasProject && project && (

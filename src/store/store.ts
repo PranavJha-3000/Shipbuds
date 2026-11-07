@@ -10,7 +10,7 @@ import { ONBOARDING_STEPS } from './types'
 import { CHANNEL_SCRIPTS, CHANNEL_REPLIES, MANAGER_DEFAULT, MANAGER_REPLIES } from './scripts'
 import {
   BUILD_NARRATION, MANAGER_BUILD_DONE, MANAGER_BUILD_INTRO, MANAGER_CONFIRM,
-  MANAGER_PLAN_INTRO, MANAGER_REVISION_INTRO, MANAGER_STRATEGY_INTRO, MANAGER_CLARIFY_INTRO,
+  MANAGER_PLAN_INTRO, MANAGER_REVISION_INTRO, MANAGER_CLARIFY_INTRO,
   planFor, titleFor, wantsBuild, wantsRevision, STRATEGY_OPTIONS, clarifyFor, decisionFor,
 } from './scripts'
 import { agentById } from './roster'
@@ -305,7 +305,7 @@ const presentPlan = (projectId: string) => {
         type: 'plan', title: project.name, summary: '', features, team: plan.team, flow: plan.flow,
         strategy: project.strategy, revision: 1,
       })
-      setTimeout(() => useStore.getState().pushManagerMessage(projectId, MANAGER_STRATEGY_INTRO, 'strategy', {
+      setTimeout(() => useStore.getState().pushManagerMessage(projectId, '', 'strategy', {
         type: 'strategy', selected: project.strategy, options: STRATEGY_OPTIONS,
       }), 600)
     }, 500)

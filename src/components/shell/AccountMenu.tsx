@@ -28,15 +28,21 @@ export const AccountMenu: React.FC = () => {
     <>
       <Popover
         label="Account"
+        side="top"
+        align="start"
+        className="w-full"
         trigger={(p) => (
           <button
             type="button"
             title={label}
             aria-label={label}
             {...p}
-            className="coarse-hit flex h-8 w-8 items-center justify-center rounded-full bg-action text-label font-semibold text-paper transition-colors duration-instant ease-standard hover:bg-bubble"
+            className="coarse-hit flex w-full items-center gap-2.5 rounded-sm px-2 py-1.5 text-left transition-colors duration-instant ease-standard hover:bg-surface"
           >
-            {(user?.name || user?.email || 'U').slice(0, 1).toUpperCase()}
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-action text-label font-semibold text-paper">
+              {(user?.name || user?.email || 'U').slice(0, 1).toUpperCase()}
+            </span>
+            <span className="min-w-0 truncate text-label text-paper">{label}</span>
           </button>
         )}
       >

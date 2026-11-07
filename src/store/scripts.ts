@@ -125,7 +125,6 @@ export const MANAGER_REVISION_INTRO = [
   'That changes a few things. Here is the revised version.',
 ]
 
-export const MANAGER_STRATEGY_INTRO = 'Three ways we could build this.'
 
 export const MANAGER_CONFIRM = (strategy: string) =>
   `${strategy} it is. I will start with the core flow.`

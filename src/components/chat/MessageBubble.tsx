@@ -49,6 +49,16 @@ export const MessageBubble: React.FC<{
   // Only messages that just arrived rise in; reopening a thread should not replay history.
   const fresh = Date.now() - message.ts < 1500
 
+  // Older build narration: the newest build card carries progress, so these shrink to a quiet line.
+  if (hideCard) {
+    return (
+      <p className="mb-1.5 flex items-center gap-2 pl-[52px] text-meta text-muted">
+        <span className="h-1 w-1 shrink-0 rounded-full bg-faint" aria-hidden />
+        {message.text}
+      </p>
+    )
+  }
+
   // Yours: right-aligned, no avatar, no name. The bubble is the whole object.
   if (isUser) {
     return (

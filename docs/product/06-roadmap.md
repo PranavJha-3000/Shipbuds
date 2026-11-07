@@ -42,7 +42,7 @@ Gaps found in the audit, checked against the code:
 9. Extract an `AgentRuntime` seam. Value high for the future, confidence high, effort medium, risk low. It lets the interface survive a backend. I would do it just before any real agent work, not before.
 10. One real specialist in a sandbox. Value very high, confidence unknown, effort large, risk high. This is the first moment the product can be evaluated for quality. It comes after the decision points below.
 
-Smaller interface items left from the redesign: the account menu is still in the header and has not moved to the sidebar; each build narration line is still its own bubble; the plan and approach cards are still two boxes; Ship has no timeline view; Vibing, dialogs and empty states have no shared spec. These are craft items, ordered after the evidence items above.
+Smaller interface items left from the redesign: Plan and Approach are still two cards placed together, Ship has no timeline view, and Vibing, dialogs and empty states have no shared spec. The account menu now sits in the sidebar footer and older build narration shrinks to quiet lines. These are craft items, ordered after the evidence items above.
 
 ## Now, Next, Later
 

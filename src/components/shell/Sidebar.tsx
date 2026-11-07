@@ -8,6 +8,7 @@ import { SectionLabel } from '../ui/Surface'
 import { Popover, MenuItem } from '../ui/Popover'
 import { Search, Pin, PinOff, Plus, Archive, MoreHorizontal, ChevronDown } from 'lucide-react'
 import { AddManagerModal } from './AddManagerModal'
+import { AccountMenu } from './AccountMenu'
 import type { Manager, Project } from '../../store/types'
 
 /**
@@ -318,6 +319,10 @@ export const ManagerSidebar: React.FC = () => {
           ) : (
             managers.map((m) => renderManagerSection(m))
           )}
+        </div>
+
+        <div className="shrink-0 border-t border-line p-2">
+          <AccountMenu />
         </div>
       </aside>
 
