@@ -4,7 +4,6 @@ export type BoopAction =
   | 'success' | 'failure' | 'wary' | 'inspect' | 'angry' | 'refuse' | 'surprise' | 'love'
   | 'random' | 'sleep' | 'wake'
 
-import type { TaskStatus } from '../../store/types'
 import { hash } from './avatarTemplates'
 
 /**
@@ -29,5 +28,8 @@ const AGENT_SKINS: Record<string, number> = { frontend: 501, backend: 1001, 'ai-
 export const skinForAgent = (agentId: string): number =>
   AGENT_SKINS[agentId] ?? SKIN_LIST[hash(agentId) % SKIN_LIST.length]
 
-export const actionForTaskStatus = (status: TaskStatus): BoopAction =>
-  ({ running: 'waiting-wave', needs_review: 'wary', done: 'success', failed: 'failure', queued: 'idle' } as const)[status]
+/** A specialist's overall status on a project (see TeamStrip). */
+export type AgentStatus = 'needs-you' | 'working' | 'failed' | 'done' | 'idle'
+
+export const actionForAgentStatus = (status: AgentStatus): BoopAction =>
+  ({ working: 'waiting-wave', 'needs-you': 'wary', done: 'success', failed: 'failure', idle: 'idle' } as const)[status]

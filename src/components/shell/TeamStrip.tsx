@@ -5,8 +5,7 @@ import { agentById } from '../../store/roster'
 import type { BuildTask, ChannelId } from '../../store/types'
 import { SpecialistIdentity } from '../ui/Identity'
 import { cx } from '../ui/cx'
-
-type AgentStatus = 'needs-you' | 'working' | 'failed' | 'done' | 'idle'
+import { actionForAgentStatus, type AgentStatus } from '../ui/boopMap'
 
 const statusOf = (tasks: BuildTask[] | undefined, ch: ChannelId): AgentStatus => {
   const mine = tasks?.filter((t) => t.channel === ch) ?? []
@@ -61,6 +60,7 @@ export const TeamStrip: React.FC = () => {
             <SpecialistIdentity
               agentId={ch}
               size="xs"
+              action={actionForAgentStatus(status)}
               className={cx('ring-2 ring-offset-1 ring-offset-ink', RING[status], status === 'working' && 'motion-safe:animate-pulse')}
             />
             {status === 'needs-you' && (

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { AVATAR_SKINS, actionForTaskStatus, skinForAgent, skinForTemplate } from './boopMap'
+import { AVATAR_SKINS, actionForAgentStatus, skinForAgent, skinForTemplate } from './boopMap'
 
 describe('boopMap', () => {
   it('maps each saved template id to a fixed skin', () => {
@@ -27,11 +27,11 @@ describe('boopMap', () => {
     expect(new Set(ids.map(skinForAgent)).size).toBe(ids.length)
   })
 
-  it('maps task status to an expression', () => {
-    expect(actionForTaskStatus('running')).toBe('waiting-wave')
-    expect(actionForTaskStatus('needs_review')).toBe('wary')
-    expect(actionForTaskStatus('done')).toBe('success')
-    expect(actionForTaskStatus('failed')).toBe('failure')
-    expect(actionForTaskStatus('queued')).toBe('idle')
+  it('maps a specialist status to an expression', () => {
+    expect(actionForAgentStatus('working')).toBe('waiting-wave')
+    expect(actionForAgentStatus('needs-you')).toBe('wary')
+    expect(actionForAgentStatus('done')).toBe('success')
+    expect(actionForAgentStatus('failed')).toBe('failure')
+    expect(actionForAgentStatus('idle')).toBe('idle')
   })
 })

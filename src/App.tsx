@@ -73,7 +73,7 @@ export const Home: React.FC = () => {
   return (
     <div className="flex h-full items-center justify-center p-6">
       <EmptyState
-        icon={<Identity size="lg" />}
+        icon={<Identity size="lg" live />}
         title="Select a project"
         body="Pick a project to open its conversation with The Manager, or create a new one."
         actionLabel="View projects"
