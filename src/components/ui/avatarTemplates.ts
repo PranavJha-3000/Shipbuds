@@ -31,7 +31,7 @@ export const AVATAR_TEMPLATES: AvatarTemplate[] = [
 ]
 
 /** FNV-1a — tiny, stable across sessions, good spread over 8 buckets. */
-const hash = (s: string) => {
+export const hash = (s: string) => {
   let h = 2166136261
   for (let i = 0; i < s.length; i++) {
     h ^= s.charCodeAt(i)
