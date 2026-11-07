@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { AVATAR_SKINS, actionForAgentStatus, skinForAgent, skinForTemplate } from './boopMap'
+import { AVATAR_SKINS, AGENT_SKINS, actionForAgentStatus, skinForAgent, skinForTemplate, waitingVariant } from './boopMap'
 
 describe('boopMap', () => {
   it('maps each saved template id to a fixed skin', () => {
@@ -25,6 +25,22 @@ describe('boopMap', () => {
   it('gives every specialist its own skin', () => {
     const ids = ['frontend', 'backend', 'ai-ml', 'devops', 'qa']
     expect(new Set(ids.map(skinForAgent)).size).toBe(ids.length)
+  })
+
+  it('never gives a specialist the same face as a Manager', () => {
+    const managers = new Set(Object.values(AVATAR_SKINS))
+    for (const id of Object.keys(AGENT_SKINS)) expect(managers.has(skinForAgent(id))).toBe(false)
+    for (const k of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']) {
+      expect(Object.values(AGENT_SKINS)).not.toContain(skinForTemplate(undefined, k))
+    }
+  })
+
+  it('loops waiting expressions and plays the rest once', () => {
+    expect(waitingVariant('waiting-wave')).toBe('wave')
+    expect(waitingVariant('waiting-spin')).toBe('spin')
+    expect(waitingVariant('waiting-wrap')).toBe('wrap')
+    expect(waitingVariant('wary')).toBeNull()
+    expect(waitingVariant(undefined)).toBeNull()
   })
 
   it('maps a specialist status to an expression', () => {

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import 'boopface'
 import type { BoopFace } from 'boopface'
-import type { BoopAction } from './boopMap'
+import { waitingVariant, type BoopAction } from './boopMap'
 
 /**
  * BOOP AVATAR — the only file that touches the <boop-face> custom element.
@@ -28,15 +28,24 @@ export const BoopAvatar: React.FC<{
 
   useEffect(() => {
     const el = ref.current
-    if (!el || !action || action === 'idle') {
-      ref.current?.reset?.()
-      return
+    if (!el) return
+    const variant = waitingVariant(action)
+    if (variant) {
+      void el.startWaiting?.({ variant })
+      return () => { el.stopWaiting?.() }
     }
-    void el.play?.(action)
+    if (!action || action === 'idle') el.reset?.()
+    else void el.play?.(action)
   }, [action])
 
   return (
-    <span aria-hidden className={className} style={{ width: px, height: px, display: 'inline-block' }}>
+    // Without pointer-events: none a face swallows clicks that move a little (it treats them as a
+    // drag) and blocks touch scrolling, so list avatars inside buttons and rows stay inert.
+    <span
+      aria-hidden
+      className={className}
+      style={{ width: px, height: px, display: 'inline-block', pointerEvents: live ? 'auto' : 'none' }}
+    >
       <boop-face ref={ref} size={px} skin={skin} motion="auto" />
     </span>
   )

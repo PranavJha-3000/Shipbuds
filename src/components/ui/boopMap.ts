@@ -22,11 +22,16 @@ const SKIN_LIST = Object.values(AVATAR_SKINS)
 export const skinForTemplate = (templateId: string | undefined, fallbackKey: string): number =>
   (templateId && Object.prototype.hasOwnProperty.call(AVATAR_SKINS, templateId) ? AVATAR_SKINS[templateId] : undefined) ?? SKIN_LIST[hash(fallbackKey || 'manager') % SKIN_LIST.length]
 
-const AGENT_SKINS: Record<string, number> = { frontend: 501, backend: 1001, 'ai-ml': 701, devops: 901, qa: 1601 }
+/** Disjoint from AVATAR_SKINS, so a specialist never looks like a Manager. */
+export const AGENT_SKINS: Record<string, number> = { frontend: 305, backend: 705, 'ai-ml': 905, devops: 1005, qa: 505 }
 
 /** Specialists always wear the same face. Unknown ids fall back to the hash. */
 export const skinForAgent = (agentId: string): number =>
   AGENT_SKINS[agentId] ?? SKIN_LIST[hash(agentId) % SKIN_LIST.length]
+
+/** BoopFace plays waiting expressions once; `startWaiting` is what loops them. */
+export const waitingVariant = (action: BoopAction | undefined): 'spin' | 'wrap' | 'wave' | null =>
+  action === 'waiting-spin' ? 'spin' : action === 'waiting-wrap' ? 'wrap' : action === 'waiting-wave' ? 'wave' : null
 
 /** A specialist's overall status on a project (see TeamStrip). */
 export type AgentStatus = 'needs-you' | 'working' | 'failed' | 'done' | 'idle'
