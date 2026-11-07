@@ -54,7 +54,7 @@ export const PlanCard: React.FC<{ card: PlanCardData }> = ({ card }) => {
   }
 
   return (
-    <Shell>
+    <Shell className="rounded-b-none border-b-0">
       <div className="flex items-center justify-between px-4 pt-3">
         <CardLabel>Plan</CardLabel>
         {card.revision > 1 && (
@@ -135,9 +135,10 @@ export const StrategyCard: React.FC<{ card: StrategyCardData }> = ({ card }) => 
   const chooseStrategy = useStore((s) => s.chooseStrategy)
   const chosen = card.options.find((o) => o === card.selected)
 
+  // Joined to the Plan card above: one block, two sections.
   return (
-    <Shell>
-      <div className="px-4 pt-3">
+    <Shell className="-mt-[calc(0.375rem+1px)] rounded-t-none">
+      <div className="border-t border-line px-4 pt-3">
         <CardLabel>Approach</CardLabel>
       </div>
 

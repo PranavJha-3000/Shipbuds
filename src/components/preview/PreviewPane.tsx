@@ -102,8 +102,6 @@ export const PreviewPane: React.FC<{ open?: boolean; onClose?: () => void }> = (
               icon={<Sparkles size={18} />}
               title="Nothing built yet"
               body="Describe what you want in Manager chat and your team will build it here."
-              actionLabel="Start building"
-              onAction={() => startBuild(projectId)}
             />
           </div>
         )}
