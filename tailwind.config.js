@@ -46,6 +46,17 @@ export default {
         /* Borders / dividers — solid subtle line on dark. */
         line: '#2c2c32',     // --border-subtle
         lineSoft: 'rgba(44,44,50,0.6)',
+
+        /* Landing page only. Blue = work and primary actions, red = needs you. */
+        'lp-bg': '#06070b',
+        'lp-deck': '#0d0f16',
+        'lp-rail': '#1a1e2b',
+        'lp-line': '#222737',
+        'lp-text': '#eceef4',
+        'lp-fog': '#8a91a6',
+        'lp-blue': '#3d6bff',
+        'lp-blueHover': '#5a82ff',
+        'lp-red': '#ff3d50',
       },
 
       /*
@@ -98,6 +109,8 @@ export default {
       },
 
       fontFamily: {
+        display: ['"Instrument Sans"', 'system-ui', 'sans-serif'],
+        lpmono: ['"JetBrains Mono"', 'ui-monospace', 'Consolas', 'monospace'],
         sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"SF Pro Display"', 'system-ui', 'sans-serif'],
         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace'],
       },

@@ -14,6 +14,7 @@ export const ASSETS = {
     black: '/assets/logos/Lyzr_AI_logo_black.png',
   },
   icons: {
+    chatbot: '/assets/icons/chatboticon.png',
     github: '/assets/icons/github.svg',
     vercel: '/assets/icons/vercel.svg',
     supabase: '/assets/icons/supabase.svg',

@@ -1,91 +1,45 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
-import { Check } from 'lucide-react'
 import { ASSETS } from '../../assets'
 import { COPY } from './landingCopy'
-import { SectionHead } from './Primitives'
-import { Reveal } from './Reveal'
+import { GhostLink, H2, PrimaryLink, Section } from './ui'
 
-export const Trust: React.FC = () => (
-  <section id="docs" className="scroll-mt-16 border-t border-line">
-    <div className="mx-auto max-w-6xl px-6 py-20 md:px-8 md:py-28">
-      <Reveal>
-        <SectionHead eyebrow={COPY.trust.eyebrow} title={COPY.trust.title} />
-      </Reveal>
-      <ul className="mt-10 grid gap-x-10 gap-y-6 md:grid-cols-2">
-        {COPY.trust.items.map((t) => (
-          <Reveal key={t.t}>
-            <li className="flex gap-3">
-              <Check size={15} className="mt-1 shrink-0 text-muted" aria-hidden />
-              <div>
-                <p className="text-label font-semibold text-paper">{t.t}</p>
-                <p className="mt-1 text-body leading-relaxed text-muted">{t.d}</p>
-              </div>
-            </li>
-          </Reveal>
+export const Honest: React.FC = () => (
+  <section id="honest" className="scroll-mt-24 border-y border-lp-line bg-lp-deck">
+    <Section>
+      <H2>{COPY.honest.title}</H2>
+      <dl className="mt-14 grid gap-x-16 md:grid-cols-2">
+        {COPY.honest.items.map((t) => (
+          <div key={t.t} className="border-t border-lp-line py-6">
+            <dt className="text-[20px] font-semibold tracking-[-0.02em] text-lp-text">{t.t}</dt>
+            <dd className="mt-2 max-w-[44ch] text-[16px] leading-[24px] text-lp-fog">{t.d}</dd>
+          </div>
         ))}
-      </ul>
-      <Reveal>
-        <p className="mt-8 border-t border-line pt-5 font-mono text-[11px] leading-relaxed text-faint">
-          {COPY.trust.nonClaims}
-        </p>
-      </Reveal>
-    </div>
+      </dl>
+      <p className="mt-6 border-t border-lp-line pt-6 font-lpmono text-[12px] leading-[18px] text-lp-fog">{COPY.honest.nonClaims}</p>
+    </Section>
   </section>
 )
 
 export const FinalCTA: React.FC = () => (
-  <section className="border-t border-line">
-    <div className="mx-auto max-w-6xl px-6 py-24 text-center md:px-8 md:py-32">
-      <Reveal>
-        <h2 className="mx-auto max-w-xl text-[28px] font-semibold leading-[34px] tracking-tight text-paper md:text-[36px] md:leading-[42px]">
-          {COPY.final.title}
-        </h2>
-        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Link
-            to="/signup"
-            className="inline-flex h-10 w-full items-center justify-center rounded-full bg-accent px-6 text-label font-medium text-white transition-all duration-instant ease-standard hover:bg-accentHover active:scale-[0.98] sm:w-auto"
-          >
-            {COPY.final.primary}
-          </Link>
-          <Link
-            to="/home"
-            className="inline-flex h-10 w-full items-center justify-center rounded-full border border-line bg-surface px-6 text-label font-medium text-paper transition-colors duration-instant hover:bg-bubble sm:w-auto"
-          >
-            {COPY.final.secondary}
-          </Link>
-        </div>
-      </Reveal>
+  <Section className="pb-20 md:pb-28">
+    <h2 className="max-w-[14ch] text-[clamp(44px,8vw,104px)] font-semibold leading-[0.95] tracking-[-0.05em] text-lp-text">
+      {COPY.final.title}
+    </h2>
+    <div className="mt-10 flex flex-wrap gap-3">
+      <PrimaryLink to="/signup">{COPY.final.primary}</PrimaryLink>
+      <GhostLink to="/home">{COPY.final.secondary}</GhostLink>
     </div>
-  </section>
+  </Section>
 )
 
 export const Footer: React.FC = () => (
-  <footer className="border-t border-line">
-    <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-10 md:flex-row md:items-start md:px-8">
+  <footer className="border-t border-lp-line">
+    <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-10 md:flex-row md:items-center md:px-10">
       <div className="flex items-center gap-2.5">
-        <img src={ASSETS.logos.white} alt="Lyzr AI" className="h-6 w-6 rounded-[6px]" />
-        <div>
-          <p className="text-label font-semibold text-paper">{COPY.footer.brand}</p>
-          <p className="text-meta text-faint">{COPY.footer.by}</p>
-        </div>
+        <img src={ASSETS.icons.chatbot} alt="Shipbuds" className="brand-icon h-7 w-7" />
+        <p className="text-[14px] text-lp-text">{COPY.footer.brand} <span className="text-lp-fog">by {COPY.footer.by}</span></p>
       </div>
-      <div className="grid grid-cols-2 gap-8 md:ml-auto">
-        {COPY.footer.cols.map((c) => (
-          <div key={c.h}>
-            <p className="text-micro font-semibold uppercase tracking-[0.06em] text-faint">{c.h}</p>
-            <ul className="mt-3 space-y-2">
-              {c.links.map((l) => (
-                <li key={l}>
-                  <a href="#top" className="text-[13px] text-muted transition-colors duration-instant hover:text-paper">
-                    {l}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
+      <p className="text-[13px] text-lp-fog md:ml-auto">{COPY.footer.credit}</p>
     </div>
   </footer>
 )
