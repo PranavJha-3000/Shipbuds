@@ -1,6 +1,7 @@
 import React from 'react'
 import { LandingNav } from '../components/landing/LandingNav'
 import { Hero } from '../components/landing/Hero'
+import { Showcase } from '../components/landing/Showcase'
 import { Team } from '../components/landing/Team'
 import { Flow } from '../components/landing/Flow'
 import { Workspace } from '../components/landing/Workspace'
@@ -17,6 +18,7 @@ export const Landing: React.FC = () => (
     <LandingNav />
     <main>
       <Hero />
+      <Showcase />
       <Team />
       <Flow />
       <Workspace />

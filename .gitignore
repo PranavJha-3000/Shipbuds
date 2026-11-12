@@ -6,3 +6,6 @@ dist
 tsconfig.tsbuildinfo
 *.tsbuildinfo
 
+
+# /brag video workspace (final video lives in public/assets/showcase)
+brag-output/

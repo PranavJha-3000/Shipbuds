@@ -23,5 +23,7 @@ export const ASSETS = {
   demo: {
     // Space in folder/file names must be %20-encoded for Vite `/public` serving.
     uiVideo: '/assets/UI%20Demo/UI%20Video.mp4',
+    showcase: '/assets/showcase/Shipbuds%20product%20showcase.mp4',
+    showcasePoster: '/assets/showcase/Shipbuds%20product%20showcase.jpg',
   },
 } as const

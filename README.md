@@ -4,6 +4,10 @@ A vibe-coding platform that feels like talking to an AI engineering team rather 
 
 Manager is the primary interface. Work is routed to specialist team channels (`#frontend`, `#backend`, `#ai-ml`, `#devops`, `#qa`), a persistent Preview pane builds section by section, and UI Head Canvas handles visual design. Technical users can drop into Code, GitHub and Deploy at any point; non-technical users can stay in Manager + Preview the whole time.
 
+[![Shipbuds product showcase: one sentence becomes a ride app, seen by a non-technical founder and an engineer](<public/assets/showcase/Shipbuds product showcase.jpg>)](<public/assets/showcase/Shipbuds product showcase.mp4>)
+
+**[Watch the Shipbuds product showcase](<public/assets/showcase/Shipbuds product showcase.mp4>)** (96s, with sound). It is also on the landing page.
+
 Product thinking (strategy, PRD, discovery plan, metrics, AI evaluation, roadmap, decision log) is in [`docs/product/`](docs/product/README.md).
 
 ## Running locally

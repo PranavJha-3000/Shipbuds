@@ -7,6 +7,10 @@ export const COPY = {
     primary: 'Start building',
     secondary: 'Explore the workspace',
   },
+  showcase: {
+    title: 'Watch one sentence become a ride app.',
+    sub: 'A founder and an engineer build the same app: one stays in the chat, the other reads every file.',
+  },
   team: {
     title: 'A Manager up front. Specialists when the work calls for them.',
     note: 'Specialists join only when the Manager routes work to them. Nobody idles in the chat.',
